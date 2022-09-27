@@ -1,15 +1,16 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AuthModule } from './modules/auth/auth.module';
 
 export function generateDocumentacion(app) {
 	/** Genera una documentacion para el modulo de usuarios */
-	const configUsuario = new DocumentBuilder()
-		.setTitle('Usuarios')
-		.setDescription('Modulo Usuarios')
+	const configAuth = new DocumentBuilder()
+		.setTitle('Autenticación')
+		.setDescription('Modulo de autenticación')
 		.setVersion(process.env.APP_VERSION)
 		.addBearerAuth()
 		.build();
-	const configUsuarioGeneral = SwaggerModule.createDocument(app, configUsuario, {
-		//   include: [UsuarioModule],
+	const configAuthGeneral = SwaggerModule.createDocument(app, configAuth, {
+		include: [AuthModule],
 	});
-	SwaggerModule.setup('docs/usuario', app, configUsuarioGeneral);
+	SwaggerModule.setup('docs/auth', app, configAuthGeneral);
 }

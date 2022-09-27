@@ -32,8 +32,7 @@ async function bootstrap() {
 	// FIN CONFIGURACION PARA DOCUMENTACION
 	await app.listen(process.env.PORT, () => {
 		console.log(`Server running on port ${process.env.PORT}`);
-		console.log(`MOdo ${process.env.NODE_ENV}`);
-		console.log(new Date());
+		console.log(`Modo ${process.env.TIPO}`);
 	});
 }
 bootstrap();
