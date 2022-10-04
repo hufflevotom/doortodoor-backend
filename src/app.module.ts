@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import * as Joi from 'joi';
 import { MongooseModule } from '@nestjs/mongoose';
+import * as Joi from 'joi';
+import { join } from 'path';
+//* Config
 import config, { validation } from './config/config';
 import { environment } from './config/enviroments';
+//* Modules
 import { AuthModule } from './modules/auth/auth.module';
-import { join } from 'path';
 import { TransportModule } from './modules/transport/transport.module';
 import { DocumentModule } from './modules/document/document.module';
 @Module({

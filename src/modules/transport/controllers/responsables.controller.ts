@@ -8,7 +8,7 @@ import { ResponsablesService } from '../services/responsables.service';
 import { ResponsableDto, UpdateResponsableDto } from '../dto/responsable.dto';
 
 @ApiTags('Responsables')
-@Controller('responsables')
+@Controller('transport/responsables')
 export class ResponsablesController {
 	constructor(private readonly responsableService: ResponsablesService) {}
 

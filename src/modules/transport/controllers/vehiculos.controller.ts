@@ -19,7 +19,7 @@ import { QueryLimitDto } from 'src/common/queryLimit.dto';
 import { UpdateVehiculoDto, VehiculoDto } from '../dto/vehiculos.dto';
 
 @ApiTags('Vehiculos')
-@Controller('vehiculos')
+@Controller('transport/vehiculos')
 export class VehiculosController {
 	constructor(private readonly vehiculosService: VehiculosService) {}
 
