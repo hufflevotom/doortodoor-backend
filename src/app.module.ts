@@ -7,6 +7,8 @@ import config, { validation } from './config/config';
 import { environment } from './config/enviroments';
 import { AuthModule } from './modules/auth/auth.module';
 import { join } from 'path';
+import { TransportModule } from './modules/transport/transport.module';
+import { DocumentModule } from './modules/document/document.module';
 @Module({
 	imports: [
 		ServeStaticModule.forRoot({
@@ -17,15 +19,20 @@ import { join } from 'path';
 			// * Definimos que es global
 			isGlobal: true,
 			// * Definimos el archivo de configuracion
-			envFilePath: environment[process.env.NODE_ENV] || '.env',
+			envFilePath: environment[process.env.NODE_ENV] || ['.env', '.env.local'],
 			// * Definimos el esquema y la validacion
 			load: [config],
 			validationSchema: Joi.object(validation),
 		}),
-		MongooseModule.forRoot(`${process.env.MONGODB_URI}`, {
-			useNewUrlParser: true,
-		}),
+		MongooseModule.forRoot(
+			`mongodb+srv://${process.env.USER_DB}:${process.env.PASSWORD_DB}@${process.env.HOST_DB}/${process.env.DATABASE}`,
+			{
+				useNewUrlParser: true,
+			},
+		),
 		AuthModule,
+		TransportModule,
+		DocumentModule,
 	],
 })
 export class AppModule {}

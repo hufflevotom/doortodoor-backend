@@ -1,4 +1,4 @@
 export const environment = {
-	dev: '.env',
-	prod: '.env.prod',
+	dev: ['.env', '.env.local', '.env.development', '.env.development.local'],
+	prod: ['.env', '.env.local', '.env.production', '.env.production.local'],
 };

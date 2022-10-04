@@ -12,10 +12,10 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 //* Utils
 import { customResponse } from 'src/common/response';
-import { RolesDto, RolesLimitDto, UpdateRolesDto } from '../../dto/roles/roles.dto';
 //* Services
 import { RolesService } from '../../services/roles/roles.service';
 //* DTO's
+import { RolesDto, RolesLimitDto, UpdateRolesDto } from '../../dto/roles/roles.dto';
 
 @ApiTags('Roles')
 @Controller('auth/roles')

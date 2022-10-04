@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { Usuario } from '../../interfaces/usuarios/usuario.interface';
 //* DTO's
 import { UpdateUsuarioDto, UsuarioDto, UsuarioLimitDto } from '../../dto/usuarios/usuario.dto';
+//* Services
 import { RolesService } from '../roles/roles.service';
 
 @Injectable()
