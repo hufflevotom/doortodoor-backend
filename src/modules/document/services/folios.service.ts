@@ -11,7 +11,7 @@ import { LocalAbastecimiento } from '../interfaces/localAbastecimiento.interface
 import { UbicacionEntrega } from '../interfaces/ubicacionEntrega.interface';
 //* DTO's
 import { QueryLimitDto } from 'src/common/queryLimit.dto';
-import { FolioDto, UpdateFolioDto } from '../dto/folio.dto';
+import { FolioDto, ManyFoliosDto, UpdateFolioDto } from '../dto/folio.dto';
 //* Services
 
 @Injectable()
@@ -31,7 +31,7 @@ export class FoliosService {
 	findAll(query: QueryLimitDto) {
 		return this.folioModel
 			.find()
-			.sort({ updatedAt: -1 })
+			.sort({ createAt: -1 })
 			.limit(query.limit)
 			.skip(query.offset)
 			.populate([
@@ -68,12 +68,6 @@ export class FoliosService {
 					select: ['localAbastecimiento'],
 				},
 			]);
-		// .populate([
-		// 	'idDetalleCliente',
-		// 	'idDetalleEntrega',
-		// 	'idDetallePedido',
-		// 	'idLocalAbastecimiento',
-		// ]);
 	}
 
 	async count(): Promise<number> {
@@ -317,7 +311,7 @@ export class FoliosService {
 			.distinct('ruta');
 	}
 
-	cargarFolios() {
+	insertMany(dto: ManyFoliosDto[]) {
 		return;
 	}
 }

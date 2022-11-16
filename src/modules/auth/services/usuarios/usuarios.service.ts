@@ -38,8 +38,20 @@ export class UsuariosService {
 	}
 
 	async create(usuario: UsuarioDto): Promise<Usuario> {
-		const hashedPassword = await bcrypt.hash(usuario.contrasena, 10);
-		usuario.contrasena = hashedPassword;
+		const usuarioExiste = await this.usuarioModel.findOne({ documento: usuario.documento });
+		if (
+			usuarioExiste && usuarioExiste.documento
+				? usuarioExiste.documento === usuario.documento
+				: false
+		) {
+			throw new NotFoundException('Usuario ya existe');
+		}
+
+		if (!usuario.contrasena) {
+			throw new NotFoundException('Contraseña es requerida');
+		}
+		const hash = await bcrypt.hash(usuario.contrasena, 10);
+		usuario.contrasena = hash;
 
 		const rol = await this.rolesService.findOne(usuario.idTipoRol);
 		if (!rol) {
@@ -62,10 +74,13 @@ export class UsuariosService {
 			}
 			usuario.idTipoRol = usuario.idTipoRol;
 		}
-		if (usuario.contrasena) {
-			const hashedPassword = await bcrypt.hash(usuario.contrasena, 10);
-			usuario.contrasena = hashedPassword;
+
+		if (!usuario.contrasena) {
+			throw new NotFoundException('Contraseña es requerida');
 		}
+		const hash = await bcrypt.hash(usuario.contrasena, 10);
+		usuario.contrasena = hash;
+
 		return await this.usuarioModel.findByIdAndUpdate(id, usuario, { new: true });
 	}
 
@@ -75,14 +90,13 @@ export class UsuariosService {
 
 	async login(documento: string, contrasena: string) {
 		const usuario = await this.usuarioModel.findOne({ documento });
-		if (usuario) {
-			if (bcrypt.compareSync(contrasena, usuario.contrasena)) {
-				return usuario;
-			} else {
-				throw new NotFoundException('Contraseña incorrecta');
-			}
-		} else {
+		if (!usuario) {
 			throw new NotFoundException('Usuario no existe');
 		}
+		const isMatch = await bcrypt.compare(contrasena, usuario.contrasena);
+		if (!isMatch) {
+			throw new NotFoundException('Contraseña incorrecta');
+		}
+		return usuario;
 	}
 }

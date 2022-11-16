@@ -1,29 +1,41 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { IsDateString, IsOptional, IsString } from 'class-validator';
 
 export class VehiculoDto {
+	@IsString()
 	@ApiProperty({ required: true })
 	placa: string;
 
-	@ApiProperty({ required: true })
+	@IsOptional()
+	@ApiProperty({ required: false })
 	marca: string;
 
-	@ApiProperty({ required: true })
+	@IsOptional()
+	@ApiProperty({ required: false })
 	color: string;
 
+	@IsOptional()
 	@ApiProperty({ required: false })
 	modelo: string;
 
+	@IsOptional()
+	@IsDateString()
 	@ApiProperty({ required: false })
-	fechaFabricacion: Date;
+	fechaFabricacion: string;
 
+	@IsString()
 	@ApiProperty({ required: true })
 	idEstadoVehiculo: string;
 
+	@IsOptional()
+	@IsDateString()
 	@ApiProperty({ required: false })
-	vencimientoSoat: Date;
+	vencimientoSoat: string;
 
+	@IsOptional()
+	@IsDateString()
 	@ApiProperty({ required: false })
-	vencimientoRevision: Date;
+	vencimientoRevision: string;
 }
 
 export class UpdateVehiculoDto extends PartialType(VehiculoDto) {}

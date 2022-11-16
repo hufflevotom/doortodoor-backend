@@ -28,4 +28,27 @@ export class FolioDto {
 	idLocalAbastecimiento: LocalAbastecimientoDto;
 }
 
+export class ManyFoliosDto {
+	@ApiProperty({ required: false })
+	_id: string;
+
+	@ApiProperty({ required: true })
+	numeroFolio: string;
+
+	@ApiProperty({ required: true })
+	ruta: string;
+
+	@ApiProperty({ required: true })
+	idDetalleCliente: DetalleClienteDto;
+
+	@ApiProperty({ required: true })
+	idDetalleEntrega: DetalleEntregaDto;
+
+	@ApiProperty({ required: true })
+	idDetallePedido: DetallePedidoDto;
+
+	@ApiProperty({ required: true })
+	idLocalAbastecimiento: LocalAbastecimientoDto;
+}
+
 export class UpdateFolioDto extends PartialType(FolioDto) {}

@@ -4,13 +4,14 @@ import { Model } from 'mongoose';
 //* Interfaces
 import { TipoRol } from '../../interfaces/roles/roles.interface';
 //* DTO's
-import { RolesDto, RolesLimitDto, UpdateRolesDto } from '../../dto/roles/roles.dto';
+import { RolesDto, UpdateRolesDto } from '../../dto/roles/roles.dto';
+import { QueryLimitDto } from 'src/common/queryLimit.dto';
 
 @Injectable()
 export class RolesService {
 	constructor(@InjectModel('TipoRol') private readonly rolesModel: Model<TipoRol>) {}
 
-	findAll(query: RolesLimitDto) {
+	findAll(query: QueryLimitDto) {
 		return this.rolesModel.find().sort({ updatedAt: -1 }).limit(query.limit).skip(query.offset);
 	}
 
@@ -19,7 +20,7 @@ export class RolesService {
 	}
 
 	async findOne(id: string): Promise<TipoRol> {
-		return await this.rolesModel.findById(id);
+		return await this.rolesModel.findOne({ _id: id });
 	}
 
 	async create(rol: RolesDto): Promise<TipoRol> {

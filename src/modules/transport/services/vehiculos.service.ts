@@ -34,6 +34,10 @@ export class VehiculosService {
 	}
 
 	async create(vehiculo: VehiculoDto): Promise<Vehiculo> {
+		const vehiculoExiste = await this.vehiculoModel.findOne({ placa: vehiculo.placa });
+		if (vehiculoExiste) {
+			throw new NotFoundException('La placa ya existe');
+		}
 		const estado = await this.estadoVehiculoModel.findById(vehiculo.idEstadoVehiculo);
 		if (!estado) {
 			throw new NotFoundException('El estado no existe');

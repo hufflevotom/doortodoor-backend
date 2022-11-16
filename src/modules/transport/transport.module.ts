@@ -12,6 +12,8 @@ import { VehiculosService } from './services/vehiculos.service';
 import { ResponsablesService } from './services/responsables.service';
 //* Modules
 import { AuthModule } from '../auth/auth.module';
+import { EstadoVehiculoController } from './controllers/estado-vehiculo/estado-vehiculo.controller';
+import { EstadoVehiculoService } from './services/estado-vehiculo/estado-vehiculo.service';
 
 @Module({
 	imports: [
@@ -22,8 +24,8 @@ import { AuthModule } from '../auth/auth.module';
 		]),
 		AuthModule,
 	],
-	controllers: [VehiculosController, ResponsablesController],
-	providers: [VehiculosService, ResponsablesService],
+	controllers: [VehiculosController, ResponsablesController, EstadoVehiculoController],
+	providers: [VehiculosService, ResponsablesService, EstadoVehiculoService],
 	exports: [VehiculosService, ResponsablesService],
 })
 export class TransportModule {}

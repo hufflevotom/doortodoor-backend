@@ -15,7 +15,8 @@ import { customResponse } from 'src/common/response';
 //* Services
 import { RolesService } from '../../services/roles/roles.service';
 //* DTO's
-import { RolesDto, RolesLimitDto, UpdateRolesDto } from '../../dto/roles/roles.dto';
+import { RolesDto, UpdateRolesDto } from '../../dto/roles/roles.dto';
+import { QueryLimitDto } from 'src/common/queryLimit.dto';
 
 @ApiTags('Roles')
 @Controller('auth/roles')
@@ -26,7 +27,7 @@ export class RolesController {
 	@ApiOperation({
 		summary: 'Obtener todos los roles',
 	})
-	async findAll(@Query() query: RolesLimitDto) {
+	async findAll(@Query() query: QueryLimitDto) {
 		const model = await this.rolesService.findAll(query);
 		const total = await this.rolesService.count();
 		return customResponse('roles', model, 200, total);

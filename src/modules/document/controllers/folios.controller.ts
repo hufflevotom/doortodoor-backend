@@ -16,10 +16,10 @@ import { customResponse } from 'src/common/response';
 import { FoliosService } from '../services/folios.service';
 //* DTO's
 import { QueryLimitDto } from 'src/common/queryLimit.dto';
-import { FolioDto, UpdateFolioDto } from '../dto/folio.dto';
+import { FolioDto, ManyFoliosDto, UpdateFolioDto } from '../dto/folio.dto';
 
 @ApiTags('Folios')
-@Controller('folios')
+@Controller('document/folios')
 export class FoliosController {
 	constructor(private readonly foliosService: FoliosService) {}
 
@@ -38,11 +38,30 @@ export class FoliosController {
 		return customResponse('Folio', data);
 	}
 
-	@Post()
+	@Post('/delete')
+	@ApiOperation({
+		summary: 'Eliminar un folio',
+	})
+	async delete(@Body() body: FolioDto) {
+		const data = await this.foliosService.delete(body);
+		if (data) {
+			return customResponse('Folio eliminado');
+		}
+		throw new NotFoundException('Folio no encontrado');
+	}
+
+	@Post('/delete')
 	@ApiOperation({ summary: 'Crear un folio' })
 	async create(@Body() body: FolioDto) {
 		const data = await this.foliosService.create(body);
 		return customResponse('Folio', data);
+	}
+
+	@Post('/insertMany')
+	@ApiOperation({ summary: 'Cargar folios' })
+	async insertMany(@Body() body: ManyFoliosDto[]) {
+		const data = await this.foliosService.insertMany(body);
+		return customResponse('Folios', data);
 	}
 
 	@Put('/:id')
@@ -50,17 +69,5 @@ export class FoliosController {
 	async update(@Param('id') id: string, @Body() body: UpdateFolioDto) {
 		const data = await this.foliosService.update(id, body);
 		return customResponse('Folio actualizado', data);
-	}
-
-	@Delete('/:id')
-	@ApiOperation({
-		summary: 'Eliminar un folio',
-	})
-	async delete(@Param('id') id: string) {
-		const data = await this.foliosService.delete(id);
-		if (data) {
-			return customResponse('Folio eliminado');
-		}
-		throw new NotFoundException('Folio no encontrado');
 	}
 }
