@@ -38,19 +38,19 @@ export class FoliosController {
 		return customResponse('Folio', data);
 	}
 
-	@Post('/delete')
+	@Delete('/:id')
 	@ApiOperation({
 		summary: 'Eliminar un folio',
 	})
-	async delete(@Body() body: FolioDto) {
-		const data = await this.foliosService.delete(body);
+	async delete(@Param('id') id: string) {
+		const data = await this.foliosService.delete(id);
 		if (data) {
 			return customResponse('Folio eliminado');
 		}
 		throw new NotFoundException('Folio no encontrado');
 	}
 
-	@Post('/delete')
+	@Post('')
 	@ApiOperation({ summary: 'Crear un folio' })
 	async create(@Body() body: FolioDto) {
 		const data = await this.foliosService.create(body);

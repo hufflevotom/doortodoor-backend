@@ -109,38 +109,6 @@ export class FoliosService {
 				select: ['localAbastecimiento'],
 			},
 		]);
-		// .populate({
-		// 	path: 'idDetalleCliente',
-		// 	model: 'DetalleCliente',
-		// 	select: ['nombre', 'dni', 'telefono', 'direccion'],
-		// })
-		// .populate({
-		// 	path: 'idDetalleEntrega',
-		// 	model: 'DetalleEntrega',
-		// 	populate: [
-		// 		{
-		// 			path: 'idUbicacionEntrega',
-		// 			model: 'UbicacionEntrega',
-		// 			select: ['latitud', 'longitud', 'distrito'],
-		// 		},
-		// 		{
-		// 			path: 'idHorarioVisita',
-		// 			model: 'HorarioVisita',
-		// 			select: ['inicioVisita', 'finVisita'],
-		// 		},
-		// 	],
-		// 	select: ['fechaEntrega', 'idUbicacionEntrega', 'ordenEntrega', 'idHorarioVisita'],
-		// })
-		// .populate({
-		// 	path: 'idDetallePedido',
-		// 	model: 'DetallePedido',
-		// 	select: ['descripcionPedido'],
-		// })
-		// .populate({
-		// 	path: 'idLocalAbastecimiento',
-		// 	model: 'LocalAbastecimiento',
-		// 	select: ['localAbastecimiento'],
-		// });
 	}
 
 	async create(dto: FolioDto): Promise<Folio> {
@@ -206,7 +174,7 @@ export class FoliosService {
 
 		if (dto.idDetalleCliente) {
 			const detalleCliente = await this.detalleClienteModel.findByIdAndUpdate(
-				dto.idDetalleCliente._id,
+				modelActualizar.idDetalleCliente,
 				dto.idDetalleCliente,
 				{ new: true },
 			);
@@ -217,7 +185,9 @@ export class FoliosService {
 		}
 
 		if (dto.idDetalleEntrega) {
-			const detalleEntregaActualizar = await this.detalleEntregaModel.findById(id);
+			const detalleEntregaActualizar = await this.detalleEntregaModel.findById(
+				modelActualizar.idDetalleEntrega,
+			);
 			if (!detalleEntregaActualizar) {
 				throw new NotFoundException('El detalle de entrega no existe');
 			}
@@ -229,7 +199,7 @@ export class FoliosService {
 
 			if (dto.idDetalleEntrega.idHorarioVisita) {
 				const horarioVisita = await this.horarioVisitaModel.findByIdAndUpdate(
-					dto.idDetalleEntrega.idHorarioVisita._id,
+					detalleEntregaActualizar.idHorarioVisita,
 					dto.idDetalleEntrega.idHorarioVisita,
 					{ new: true },
 				);
@@ -241,7 +211,7 @@ export class FoliosService {
 
 			if (dto.idDetalleEntrega.idUbicacionEntrega) {
 				const ubicacionEntrega = await this.ubicacionEntregaModel.findByIdAndUpdate(
-					dto.idDetalleEntrega.idUbicacionEntrega._id,
+					detalleEntregaActualizar.idUbicacionEntrega,
 					dto.idDetalleEntrega.idUbicacionEntrega,
 					{ new: true },
 				);
@@ -252,7 +222,7 @@ export class FoliosService {
 			}
 
 			const detalleEntrega = await this.detalleEntregaModel.findByIdAndUpdate(
-				dto.idDetalleEntrega._id,
+				modelActualizar.idDetalleEntrega,
 				detalleEntregaActualizar,
 				{ new: true },
 			);
@@ -264,7 +234,7 @@ export class FoliosService {
 
 		if (dto.idDetallePedido) {
 			const detallePedido = await this.detallePedidoModel.findByIdAndUpdate(
-				dto.idDetallePedido._id,
+				modelActualizar.idDetallePedido,
 				dto.idDetallePedido,
 				{ new: true },
 			);
@@ -276,7 +246,7 @@ export class FoliosService {
 
 		if (dto.idLocalAbastecimiento) {
 			const localAbastecimiento = await this.localAbastecimientoModel.findByIdAndUpdate(
-				dto.idLocalAbastecimiento._id,
+				modelActualizar.idLocalAbastecimiento,
 				dto.idLocalAbastecimiento,
 				{ new: true },
 			);
@@ -289,14 +259,16 @@ export class FoliosService {
 		return await this.folioModel.findByIdAndUpdate(id, modelActualizar, { new: true });
 	}
 
-	async delete(dto: FolioDto): Promise<Folio> {
-		await this.detalleClienteModel.findByIdAndDelete(dto.idDetalleCliente._id);
-		await this.horarioVisitaModel.findByIdAndDelete(dto.idDetalleEntrega.idHorarioVisita._id);
-		await this.ubicacionEntregaModel.findByIdAndDelete(dto.idDetalleEntrega.idUbicacionEntrega._id);
-		await this.detalleEntregaModel.findByIdAndDelete(dto.idDetalleEntrega._id);
-		await this.detallePedidoModel.findByIdAndDelete(dto.idDetallePedido._id);
-		await this.localAbastecimientoModel.findByIdAndDelete(dto.idLocalAbastecimiento._id);
-		return await this.folioModel.findByIdAndDelete(dto._id);
+	async delete(id: string): Promise<Folio> {
+		const modelEliminar = await this.folioModel.findById(id);
+		await this.detalleClienteModel.findByIdAndDelete(modelEliminar.idDetalleCliente);
+		const detalleEliminar = await this.detalleEntregaModel.findById(modelEliminar.idDetalleEntrega);
+		await this.horarioVisitaModel.findByIdAndDelete(detalleEliminar.idHorarioVisita);
+		await this.ubicacionEntregaModel.findByIdAndDelete(detalleEliminar.idUbicacionEntrega);
+		await this.detalleEntregaModel.findByIdAndDelete(modelEliminar.idDetalleEntrega);
+		await this.detallePedidoModel.findByIdAndDelete(modelEliminar.idDetallePedido);
+		await this.localAbastecimientoModel.findByIdAndDelete(modelEliminar.idLocalAbastecimiento);
+		return await this.folioModel.findByIdAndDelete(id);
 	}
 
 	async getRutas() {
