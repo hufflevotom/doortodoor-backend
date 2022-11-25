@@ -10,8 +10,7 @@ import { HorarioVisita } from '../interfaces/horarioVisita.interface';
 import { LocalAbastecimiento } from '../interfaces/localAbastecimiento.interface';
 import { UbicacionEntrega } from '../interfaces/ubicacionEntrega.interface';
 //* DTO's
-import { QueryLimitDto } from 'src/common/queryLimit.dto';
-import { FolioDto, ManyFoliosDto, UpdateFolioDto } from '../dto/folio.dto';
+import { FolioDto, FolioQueryLimitDto, ManyFoliosDto, UpdateFolioDto } from '../dto/folio.dto';
 //* Services
 
 @Injectable()
@@ -28,46 +27,86 @@ export class FoliosService {
 		private readonly ubicacionEntregaModel: Model<UbicacionEntrega>,
 	) {}
 
-	findAll(query: QueryLimitDto) {
-		return this.folioModel
-			.find()
-			.sort({ createAt: -1 })
-			.limit(query.limit)
-			.skip(query.offset)
-			.populate([
-				{
-					path: 'idDetalleCliente',
-					model: 'DetalleCliente',
-					select: ['nombre', 'dni', 'telefono', 'direccion'],
-				},
-				{
-					path: 'idDetalleEntrega',
-					model: 'DetalleEntrega',
-					populate: [
-						{
-							path: 'idUbicacionEntrega',
-							model: 'UbicacionEntrega',
-							select: ['latitud', 'longitud', 'distrito'],
-						},
-						{
-							path: 'idHorarioVisita',
-							model: 'HorarioVisita',
-							select: ['inicioVisita', 'finVisita'],
-						},
-					],
-					select: ['fechaEntrega', 'idUbicacionEntrega', 'ordenEntrega', 'idHorarioVisita'],
-				},
-				{
-					path: 'idDetallePedido',
-					model: 'DetallePedido',
-					select: ['descripcionPedido'],
-				},
-				{
-					path: 'idLocalAbastecimiento',
-					model: 'LocalAbastecimiento',
-					select: ['localAbastecimiento'],
-				},
-			]);
+	async findAll(query: FolioQueryLimitDto) {
+		const populate = [
+			{
+				path: 'idDetalleCliente',
+				model: 'DetalleCliente',
+				select: ['nombre', 'dni', 'telefono', 'direccion'],
+			},
+			{
+				path: 'idDetalleEntrega',
+				model: 'DetalleEntrega',
+				populate: [
+					{
+						path: 'idUbicacionEntrega',
+						model: 'UbicacionEntrega',
+						select: ['latitud', 'longitud', 'distrito'],
+					},
+					{
+						path: 'idHorarioVisita',
+						model: 'HorarioVisita',
+						select: ['inicioVisita', 'finVisita'],
+					},
+				],
+				select: ['fechaEntrega', 'idUbicacionEntrega', 'ordenEntrega', 'idHorarioVisita'],
+			},
+			{
+				path: 'idDetallePedido',
+				model: 'DetallePedido',
+				select: ['descripcionPedido'],
+			},
+			{
+				path: 'idLocalAbastecimiento',
+				model: 'LocalAbastecimiento',
+				select: ['localAbastecimiento'],
+			},
+		];
+
+		switch (query.criterio) {
+			case 'numeroFolio':
+				return this.folioModel
+					.find({ numeroFolio: query.busqueda })
+					.sort({ createAt: -1 })
+					.limit(query.limit)
+					.skip(query.offset)
+					.populate(populate);
+			case 'dni':
+				const dnis = await this.detalleClienteModel.find({ dni: query.busqueda }).select('_id');
+				return this.folioModel
+					.find({ idDetalleCliente: dnis })
+					.sort({ createAt: -1 })
+					.limit(query.limit)
+					.skip(query.offset)
+					.populate(populate);
+			case 'telefono':
+				const telefonos = await this.detalleClienteModel
+					.find({ telefono: query.busqueda })
+					.select('_id');
+				return this.folioModel
+					.find({ idDetalleCliente: telefonos })
+					.sort({ createAt: -1 })
+					.limit(query.limit)
+					.skip(query.offset)
+					.populate(populate);
+			case 'fechaEntrega':
+				const fechas = await this.detalleEntregaModel
+					.find({ fechaEntrega: new Date(query.busqueda) })
+					.select('_id');
+				return this.folioModel
+					.find({ idDetalleEntrega: fechas })
+					.sort({ createAt: -1 })
+					.limit(query.limit)
+					.skip(query.offset)
+					.populate(populate);
+			default:
+				return this.folioModel
+					.find()
+					.sort({ createAt: -1 })
+					.limit(query.limit)
+					.skip(query.offset)
+					.populate(populate);
+		}
 	}
 
 	async count(): Promise<number> {
@@ -133,8 +172,9 @@ export class FoliosService {
 
 		let detalleEntrega = new this.detalleEntregaModel(dto.idDetalleEntrega);
 
-		detalleEntrega.idUbicacionEntrega = ubicacionEntrega._id;
-		detalleEntrega.idHorarioVisita = horarioVisita._id;
+		detalleEntrega.fechaEntrega = new Date(dto.idDetalleEntrega.fechaEntrega);
+		detalleEntrega.idUbicacionEntrega = ubicacionEntrega;
+		detalleEntrega.idHorarioVisita = horarioVisita;
 
 		detalleEntrega = await detalleEntrega.save();
 		if (!detalleEntrega) {
@@ -155,10 +195,10 @@ export class FoliosService {
 
 		const newModel = new this.folioModel(dto);
 
-		newModel.idDetalleCliente = detalleCliente._id;
-		newModel.idDetalleEntrega = detalleEntrega._id;
-		newModel.idDetallePedido = detallePedido._id;
-		newModel.idLocalAbastecimiento = localAbastecimiento._id;
+		newModel.idDetalleCliente = detalleCliente;
+		newModel.idDetalleEntrega = detalleEntrega;
+		newModel.idDetallePedido = detallePedido;
+		newModel.idLocalAbastecimiento = localAbastecimiento;
 
 		return await newModel.save();
 	}
@@ -181,7 +221,7 @@ export class FoliosService {
 			if (!detalleCliente) {
 				throw new NotFoundException('El detalle de cliente no se guardó correctamente');
 			}
-			modelActualizar.idDetalleCliente = detalleCliente._id;
+			modelActualizar.idDetalleCliente = detalleCliente;
 		}
 
 		if (dto.idDetalleEntrega) {
@@ -206,7 +246,7 @@ export class FoliosService {
 				if (!horarioVisita) {
 					throw new NotFoundException('El horario de visita no se guardó correctamente');
 				}
-				detalleEntregaActualizar.idHorarioVisita = horarioVisita._id;
+				detalleEntregaActualizar.idHorarioVisita = horarioVisita;
 			}
 
 			if (dto.idDetalleEntrega.idUbicacionEntrega) {
@@ -218,7 +258,7 @@ export class FoliosService {
 				if (!ubicacionEntrega) {
 					throw new NotFoundException('La ubicación de entrega no se guardó correctamente');
 				}
-				detalleEntregaActualizar.idUbicacionEntrega = ubicacionEntrega._id;
+				detalleEntregaActualizar.idUbicacionEntrega = ubicacionEntrega;
 			}
 
 			const detalleEntrega = await this.detalleEntregaModel.findByIdAndUpdate(
@@ -229,7 +269,9 @@ export class FoliosService {
 			if (!detalleEntrega) {
 				throw new NotFoundException('El detalle de entrega no se guardó correctamente');
 			}
-			modelActualizar.idDetalleEntrega = detalleEntrega._id;
+			if (dto.idDetalleEntrega.fechaEntrega)
+				detalleEntrega.fechaEntrega = new Date(dto.idDetalleEntrega.fechaEntrega);
+			modelActualizar.idDetalleEntrega = detalleEntrega;
 		}
 
 		if (dto.idDetallePedido) {
@@ -241,7 +283,7 @@ export class FoliosService {
 			if (!detallePedido) {
 				throw new NotFoundException('El detalle de pedido no se guardó correctamente');
 			}
-			modelActualizar.idDetallePedido = detallePedido._id;
+			modelActualizar.idDetallePedido = detallePedido;
 		}
 
 		if (dto.idLocalAbastecimiento) {
@@ -253,7 +295,7 @@ export class FoliosService {
 			if (!localAbastecimiento) {
 				throw new NotFoundException('El local de abastecimiento no se guardó correctamente');
 			}
-			modelActualizar.idLocalAbastecimiento = localAbastecimiento._id;
+			modelActualizar.idLocalAbastecimiento = localAbastecimiento;
 		}
 
 		return await this.folioModel.findByIdAndUpdate(id, modelActualizar, { new: true });

@@ -1,7 +1,7 @@
-import { Document } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
 
 export interface HorarioVisita extends Document {
-	_id: string;
+	_id: ObjectId;
 	inicioVisita: number;
 	finVisita: number;
 	createdAt: Date;

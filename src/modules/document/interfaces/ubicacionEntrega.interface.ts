@@ -1,7 +1,7 @@
-import { Document } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
 
 export interface UbicacionEntrega extends Document {
-	_id: string;
+	_id: ObjectId;
 	latitud: string;
 	longitud: string;
 	distrito: string;

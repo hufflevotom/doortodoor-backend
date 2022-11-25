@@ -15,8 +15,7 @@ import { customResponse } from 'src/common/response';
 //* Services
 import { FoliosService } from '../services/folios.service';
 //* DTO's
-import { QueryLimitDto } from 'src/common/queryLimit.dto';
-import { FolioDto, ManyFoliosDto, UpdateFolioDto } from '../dto/folio.dto';
+import { FolioDto, FolioQueryLimitDto, ManyFoliosDto, UpdateFolioDto } from '../dto/folio.dto';
 
 @ApiTags('Folios')
 @Controller('document/folios')
@@ -25,7 +24,7 @@ export class FoliosController {
 
 	@Get()
 	@ApiOperation({ summary: 'Obtener todos los folios' })
-	async findAll(@Query() query: QueryLimitDto) {
+	async findAll(@Query() query: FolioQueryLimitDto) {
 		const data = await this.foliosService.findAll(query);
 		const total = await this.foliosService.count();
 		return customResponse('Folios', data, 200, total);

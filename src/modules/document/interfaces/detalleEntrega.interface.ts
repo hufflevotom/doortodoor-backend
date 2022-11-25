@@ -1,11 +1,14 @@
-import { Document } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
+// * Interfaces
+import { HorarioVisita } from './horarioVisita.interface';
+import { UbicacionEntrega } from './ubicacionEntrega.interface';
 
 export interface DetalleEntrega extends Document {
-	_id: string;
+	_id: ObjectId;
 	fechaEntrega: Date;
-	idUbicacionEntrega: string;
+	idUbicacionEntrega: UbicacionEntrega;
 	ordenEntrega: number;
-	idHorarioVisita: string;
+	idHorarioVisita: HorarioVisita;
 	createdAt: Date;
 	updatedAt: Date;
 }

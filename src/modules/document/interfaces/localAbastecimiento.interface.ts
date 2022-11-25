@@ -1,7 +1,7 @@
-import { Document } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
 
 export interface LocalAbastecimiento extends Document {
-	_id: string;
+	_id: ObjectId;
 	localAbastecimiento: string;
 	createdAt: Date;
 	updatedAt: Date;

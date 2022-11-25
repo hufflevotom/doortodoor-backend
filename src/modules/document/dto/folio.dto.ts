@@ -1,6 +1,13 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmptyObject, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+	IsNotEmptyObject,
+	IsNumber,
+	IsObject,
+	IsOptional,
+	IsString,
+	ValidateNested,
+} from 'class-validator';
 //* DTO's
 import { DetalleClienteDto } from './detalleCliente.dto';
 import { DetalleEntregaDto } from './detalleEntrega.dto';
@@ -94,3 +101,21 @@ export class ManyFoliosDto {
 }
 
 export class UpdateFolioDto extends PartialType(FolioDto) {}
+
+export class FolioQueryLimitDto {
+	@IsNumber()
+	@ApiProperty({ required: true })
+	limit: number;
+
+	@IsNumber()
+	@ApiProperty({ required: true })
+	offset: number;
+
+	@IsOptional()
+	@ApiProperty({ required: false })
+	criterio: string;
+
+	@IsOptional()
+	@ApiProperty({ required: false })
+	busqueda: string;
+}

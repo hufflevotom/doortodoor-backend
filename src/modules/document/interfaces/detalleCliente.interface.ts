@@ -1,7 +1,7 @@
-import { Document } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
 
 export interface DetalleCliente extends Document {
-	_id: string;
+	_id: ObjectId;
 	nombre: string;
 	dni: string;
 	telefono: string;
