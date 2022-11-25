@@ -7,4 +7,8 @@ export const constantes = {
 			: join(__dirname, '..', '..', 'public', 'files') + '/',
 	// pathFile: './dist/public/files/',
 	removePath: 'public/',
+	getPath:
+		process.env.TIPO === 'PROD'
+			? join(__dirname, '..', 'public') + '/'
+			: join(__dirname, '..', '..', 'public') + '/',
 };

@@ -6,3 +6,8 @@ export interface TipoRol extends Document {
 	createdAt: Date;
 	updatedAt: Date;
 }
+
+// export enum Role {
+// 	ADMIN = 'admin',
+// 	DISTRIBUTOR = 'distributor',
+// }
