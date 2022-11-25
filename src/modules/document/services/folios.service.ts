@@ -28,6 +28,8 @@ export class FoliosService {
 	) {}
 
 	async findAll(query: FolioQueryLimitDto) {
+		let data = [];
+		let total = 0;
 		const populate = [
 			{
 				path: 'idDetalleCliente',
@@ -62,55 +64,58 @@ export class FoliosService {
 				select: ['localAbastecimiento'],
 			},
 		];
-
-		switch (query.criterio) {
-			case 'numeroFolio':
-				return this.folioModel
-					.find({ numeroFolio: query.busqueda })
-					.sort({ createAt: -1 })
-					.limit(query.limit)
-					.skip(query.offset)
-					.populate(populate);
-			case 'dni':
-				const dnis = await this.detalleClienteModel.find({ dni: query.busqueda }).select('_id');
-				return this.folioModel
-					.find({ idDetalleCliente: dnis })
-					.sort({ createAt: -1 })
-					.limit(query.limit)
-					.skip(query.offset)
-					.populate(populate);
-			case 'telefono':
-				const telefonos = await this.detalleClienteModel
-					.find({ telefono: query.busqueda })
-					.select('_id');
-				return this.folioModel
-					.find({ idDetalleCliente: telefonos })
-					.sort({ createAt: -1 })
-					.limit(query.limit)
-					.skip(query.offset)
-					.populate(populate);
-			case 'fechaEntrega':
-				const fechas = await this.detalleEntregaModel
-					.find({ fechaEntrega: new Date(query.busqueda) })
-					.select('_id');
-				return this.folioModel
-					.find({ idDetalleEntrega: fechas })
-					.sort({ createAt: -1 })
-					.limit(query.limit)
-					.skip(query.offset)
-					.populate(populate);
-			default:
-				return this.folioModel
-					.find()
-					.sort({ createAt: -1 })
-					.limit(query.limit)
-					.skip(query.offset)
-					.populate(populate);
+		if (query.criterio === 'numeroFolio') {
+			const numerosFolio = await this.folioModel
+				.find({ numeroFolio: query.busqueda })
+				.select('_id');
+			data = await this.folioModel
+				.find({ numeroFolio: query.busqueda })
+				.sort({ createdAt: -1 })
+				.limit(query.limit)
+				.skip(query.offset)
+				.populate(populate);
+			total = numerosFolio.length;
+		} else if (query.criterio === 'dni') {
+			const dnis = await this.detalleClienteModel.find({ dni: query.busqueda }).select('_id');
+			data = await this.folioModel
+				.find({ idDetalleCliente: dnis })
+				.sort({ createdAt: -1 })
+				.limit(query.limit)
+				.skip(query.offset)
+				.populate(populate);
+			total = dnis.length;
+		} else if (query.criterio === 'telefono') {
+			const telefonos = await this.detalleClienteModel
+				.find({ telefono: query.busqueda })
+				.select('_id');
+			data = await this.folioModel
+				.find({ idDetalleCliente: telefonos })
+				.sort({ createdAt: -1 })
+				.limit(query.limit)
+				.skip(query.offset)
+				.populate(populate);
+			total = telefonos.length;
+		} else if (query.criterio === 'fechaEntrega') {
+			const fechas = await this.detalleEntregaModel
+				.find({ fechaEntrega: query.busqueda })
+				.select('_id');
+			data = await this.folioModel
+				.find({ idDetalleEntrega: fechas })
+				.sort({ createdAt: -1 })
+				.limit(query.limit)
+				.skip(query.offset)
+				.populate(populate);
+			total = fechas.length;
+		} else {
+			data = await this.folioModel
+				.find()
+				.sort({ createdAt: -1 })
+				.limit(query.limit)
+				.skip(query.offset)
+				.populate(populate);
+			total = await this.folioModel.count();
 		}
-	}
-
-	async count(): Promise<number> {
-		return await this.folioModel.count();
+		return { data, total };
 	}
 
 	async findOne(id: string): Promise<Folio> {
@@ -172,7 +177,7 @@ export class FoliosService {
 
 		let detalleEntrega = new this.detalleEntregaModel(dto.idDetalleEntrega);
 
-		detalleEntrega.fechaEntrega = new Date(dto.idDetalleEntrega.fechaEntrega);
+		// detalleEntrega.fechaEntrega = new Date(dto.idDetalleEntrega.fechaEntrega);
 		detalleEntrega.idUbicacionEntrega = ubicacionEntrega;
 		detalleEntrega.idHorarioVisita = horarioVisita;
 
@@ -234,8 +239,8 @@ export class FoliosService {
 
 			detalleEntregaActualizar.ordenEntrega = dto.idDetalleEntrega.ordenEntrega;
 
-			if (dto.idDetalleEntrega.fechaEntrega)
-				detalleEntregaActualizar.fechaEntrega = new Date(dto.idDetalleEntrega.fechaEntrega);
+			// if (dto.idDetalleEntrega.fechaEntrega)
+			// detalleEntregaActualizar.fechaEntrega = new Date(dto.idDetalleEntrega.fechaEntrega);
 
 			if (dto.idDetalleEntrega.idHorarioVisita) {
 				const horarioVisita = await this.horarioVisitaModel.findByIdAndUpdate(
@@ -269,8 +274,8 @@ export class FoliosService {
 			if (!detalleEntrega) {
 				throw new NotFoundException('El detalle de entrega no se guardó correctamente');
 			}
-			if (dto.idDetalleEntrega.fechaEntrega)
-				detalleEntrega.fechaEntrega = new Date(dto.idDetalleEntrega.fechaEntrega);
+			// if (dto.idDetalleEntrega.fechaEntrega)
+			// detalleEntrega.fechaEntrega = new Date(dto.idDetalleEntrega.fechaEntrega);
 			modelActualizar.idDetalleEntrega = detalleEntrega;
 		}
 

@@ -25,9 +25,8 @@ export class FoliosController {
 	@Get()
 	@ApiOperation({ summary: 'Obtener todos los folios' })
 	async findAll(@Query() query: FolioQueryLimitDto) {
-		const data = await this.foliosService.findAll(query);
-		const total = await this.foliosService.count();
-		return customResponse('Folios', data, 200, total);
+		const model = await this.foliosService.findAll(query);
+		return customResponse('Folios', model.data, 200, model.total);
 	}
 
 	@Get('/:id')
@@ -49,7 +48,7 @@ export class FoliosController {
 		throw new NotFoundException('Folio no encontrado');
 	}
 
-	@Post('')
+	@Post()
 	@ApiOperation({ summary: 'Crear un folio' })
 	async create(@Body() body: FolioDto) {
 		const data = await this.foliosService.create(body);
