@@ -21,6 +21,7 @@ import {
 	UsuarioDto,
 	UsuarioLimitDto,
 } from '../../dto/usuarios/usuario.dto';
+import { QueryLimitDto } from 'src/common/queryLimit.dto';
 
 @ApiTags('Usuarios')
 @Controller('auth/usuarios')
@@ -33,6 +34,13 @@ export class UsuariosController {
 		const usuarios = await this.usuariosService.findAll(query);
 		const total = await this.usuariosService.count();
 		return customResponse('Usuarios', usuarios, 200, total);
+	}
+
+	@Get('/repartidores')
+	@ApiOperation({ summary: 'Obtener usuarios repartidores' })
+	async findRepartidores(@Query() query: QueryLimitDto) {
+		const usuario = await this.usuariosService.findRepartidores(query);
+		return customResponse('Usuarios', usuario);
 	}
 
 	@Get('/:id')

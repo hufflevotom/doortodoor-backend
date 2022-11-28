@@ -320,12 +320,15 @@ export class FoliosService {
 
 	async getRutas() {
 		return await this.folioModel
-			.find({
-				createdAt: {
-					$gte: new Date().setHours(0, 0, 0, 0),
-					$lte: new Date().setHours(23, 59, 59, 999),
+			.find(
+				{
+					createdAt: {
+						$gte: new Date().setHours(0, 0, 0, 0),
+						$lte: new Date().setHours(23, 59, 59, 999),
+					},
 				},
-			})
+				{ ruta: 1 },
+			)
 			.sort({ ruta: 1 })
 			.distinct('ruta');
 	}

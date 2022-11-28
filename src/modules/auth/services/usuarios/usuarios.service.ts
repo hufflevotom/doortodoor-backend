@@ -25,6 +25,15 @@ export class UsuariosService {
 			.populate('idTipoRol');
 	}
 
+	findRepartidores(query: UsuarioLimitDto) {
+		return this.usuarioModel
+			.find({ idTipoRol: '60bb0fad68bcb70590c9eccd' })
+			.sort({ updatedAt: -1 })
+			.limit(query.limit)
+			.skip(query.offset)
+			.populate('idTipoRol');
+	}
+
 	async count(): Promise<number> {
 		return await this.usuarioModel.count();
 	}

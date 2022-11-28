@@ -16,6 +16,7 @@ import { customResponse } from 'src/common/response';
 import { FoliosService } from '../services/folios.service';
 //* DTO's
 import { FolioDto, FolioQueryLimitDto, ManyFoliosDto, UpdateFolioDto } from '../dto/folio.dto';
+import { QueryLimitDto } from 'src/common/queryLimit.dto';
 
 @ApiTags('Folios')
 @Controller('document/folios')
@@ -29,11 +30,32 @@ export class FoliosController {
 		return customResponse('Folios', model.data, 200, model.total);
 	}
 
+	@Get('/rutas')
+	@ApiOperation({ summary: 'Obtener las rutas a planificar' })
+	async rutas() {
+		const data = await this.foliosService.getRutas();
+		return customResponse('Rutas', data);
+	}
+
+	@Post()
+	@ApiOperation({ summary: 'Crear un folio' })
+	async create(@Body() body: FolioDto) {
+		const data = await this.foliosService.create(body);
+		return customResponse('Folio', data);
+	}
+
 	@Get('/:id')
 	@ApiOperation({ summary: 'Obtener un folio' })
 	async findOne(@Param('id') id: string) {
 		const data = await this.foliosService.findOne(id);
 		return customResponse('Folio', data);
+	}
+
+	@Put('/:id')
+	@ApiOperation({ summary: 'Actualizar un folio' })
+	async update(@Param('id') id: string, @Body() body: UpdateFolioDto) {
+		const data = await this.foliosService.update(id, body);
+		return customResponse('Folio actualizado', data);
 	}
 
 	@Delete('/:id')
@@ -48,24 +70,10 @@ export class FoliosController {
 		throw new NotFoundException('Folio no encontrado');
 	}
 
-	@Post()
-	@ApiOperation({ summary: 'Crear un folio' })
-	async create(@Body() body: FolioDto) {
-		const data = await this.foliosService.create(body);
-		return customResponse('Folio', data);
-	}
-
 	@Post('/insertMany')
 	@ApiOperation({ summary: 'Cargar folios' })
 	async insertMany(@Body() body: ManyFoliosDto) {
 		const data = await this.foliosService.insertMany(body);
 		return customResponse('Folios', data);
-	}
-
-	@Put('/:id')
-	@ApiOperation({ summary: 'Actualizar un folio' })
-	async update(@Param('id') id: string, @Body() body: UpdateFolioDto) {
-		const data = await this.foliosService.update(id, body);
-		return customResponse('Folio actualizado', data);
 	}
 }
