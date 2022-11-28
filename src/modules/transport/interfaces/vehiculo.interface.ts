@@ -1,7 +1,7 @@
-import { Document } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
 
 export interface Vehiculo extends Document {
-	_id: string;
+	_id: ObjectId;
 	placa: string;
 	marca: string;
 	color: string;

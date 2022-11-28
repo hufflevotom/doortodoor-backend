@@ -390,26 +390,14 @@ export class FoliosService {
 				idLocalAbastecimiento: `${idLocalAbastecimiento}`,
 			});
 		});
-		await this.detalleClienteModel.insertMany(clientes).catch(function (error) {
-			console.log(error);
-		});
-		await this.ubicacionEntregaModel.insertMany(ubicaciones).catch(function (error) {
-			console.log(error);
-		});
-		await this.horarioVisitaModel.insertMany(horarios).catch(function (error) {
-			console.log(error);
-		});
-		await this.detallePedidoModel.insertMany(pedidos).catch(function (error) {
-			console.log(error);
-		});
-		await this.localAbastecimientoModel.insertMany(locales).catch(function (error) {
-			console.log(error);
-		});
-		await this.detalleEntregaModel.insertMany(entregas).catch(function (error) {
-			console.log(error);
-		});
-		return await this.folioModel.insertMany(folios).catch(function (error) {
-			console.log(error);
-		});
+
+		await this.detalleClienteModel.insertMany(clientes);
+		await this.ubicacionEntregaModel.insertMany(ubicaciones);
+		await this.horarioVisitaModel.insertMany(horarios);
+		await this.detallePedidoModel.insertMany(pedidos);
+		await this.localAbastecimientoModel.insertMany(locales);
+		await this.detalleEntregaModel.insertMany(entregas);
+
+		return await this.folioModel.insertMany(folios);
 	}
 }

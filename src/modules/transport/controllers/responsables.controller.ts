@@ -5,7 +5,7 @@ import { customResponse } from 'src/common/response';
 //* Services
 import { ResponsablesService } from '../services/responsables.service';
 //* DTO's
-import { ResponsableDto, UpdateResponsableDto } from '../dto/responsable.dto';
+import { ManyResponsableDto, ResponsableDto, UpdateResponsableDto } from '../dto/responsable.dto';
 
 @ApiTags('Responsables')
 @Controller('transport/responsables')
@@ -16,6 +16,13 @@ export class ResponsablesController {
 	@ApiOperation({ summary: 'Obtener un responsable' })
 	async findOne(@Param('id') id: string) {
 		const data = await this.responsableService.findOne(id);
+		return customResponse('Responsable', data);
+	}
+
+	@Post('/insertMany')
+	@ApiOperation({ summary: 'Crear varios responsables' })
+	async insertMany(@Body() body: ManyResponsableDto) {
+		const data = await this.responsableService.insertMany(body);
 		return customResponse('Responsable', data);
 	}
 

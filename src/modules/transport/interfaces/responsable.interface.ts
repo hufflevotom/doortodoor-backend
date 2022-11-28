@@ -1,7 +1,7 @@
-import { Document } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
 
 export interface Responsable extends Document {
-	_id: string;
+	_id: ObjectId;
 	idUsuario: string;
 	idVehiculo: string;
 	ruta: string;

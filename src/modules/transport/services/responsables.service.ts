@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 //* Interfaces
 import { Responsable } from '../interfaces/responsable.interface';
 //* DTO's
-import { ResponsableDto, UpdateResponsableDto } from '../dto/responsable.dto';
+import { ManyResponsableDto, ResponsableDto, UpdateResponsableDto } from '../dto/responsable.dto';
 //* Services
 import { VehiculosService } from './vehiculos.service';
 import { UsuariosService } from 'src/modules/auth/services/usuarios/usuarios.service';
@@ -34,6 +34,18 @@ export class ResponsablesService {
 		return await newModel.save();
 	}
 
+	async insertMany(dto: ManyResponsableDto) {
+		const responsables = [];
+		dto.responsables.forEach(async responsable => {
+			responsables.push({
+				idUsuario: responsable.idUsuario,
+				idVehiculo: responsable.idVehiculo,
+				ruta: responsable.ruta,
+			});
+		});
+		return await this.responsableModel.insertMany(responsables);
+	}
+
 	async update(id: string, dto: UpdateResponsableDto): Promise<Responsable> {
 		const modelActualizar = await this.responsableModel.findById(id);
 		if (!modelActualizar) {
@@ -44,14 +56,12 @@ export class ResponsablesService {
 			if (!user) {
 				throw new NotFoundException('El usuario no existe');
 			}
-			dto.idUsuario = dto.idUsuario;
 		}
 		if (dto.idVehiculo) {
 			const vehicle = await this.vehiculoService.findOne(dto.idVehiculo);
 			if (!vehicle) {
 				throw new NotFoundException('El vehículo no existe');
 			}
-			dto.idVehiculo = dto.idVehiculo;
 		}
 		return await this.responsableModel.findByIdAndUpdate(id, dto, { new: true });
 	}

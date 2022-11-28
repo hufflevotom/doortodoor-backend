@@ -1,7 +1,7 @@
-import { Document } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
 
 export interface EstadoVehiculo extends Document {
-	_id: string;
+	_id: ObjectId;
 	descripcion: string;
 	createdAt: Date;
 	updatedAt: Date;
