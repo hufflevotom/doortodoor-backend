@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 //* Interfaces
 import { Folio } from '../interfaces/folio.interface';
 import { DetalleCliente } from '../interfaces/detalleCliente.interface';
@@ -330,7 +330,83 @@ export class FoliosService {
 			.distinct('ruta');
 	}
 
-	insertMany(dto: ManyFoliosDto[]) {
-		return;
+	async insertMany(dto: ManyFoliosDto) {
+		const clientes = [];
+		const ubicaciones = [];
+		const horarios = [];
+		const pedidos = [];
+		const locales = [];
+		const entregas = [];
+		const folios = [];
+		dto.name.forEach(folioActual => {
+			const idDetalleCliente = new Types.ObjectId();
+			const idUbicacionEntrega = new Types.ObjectId();
+			const idHorarioVisita = new Types.ObjectId();
+			const idDetalleEntrega = new Types.ObjectId();
+			const idDetallePedido = new Types.ObjectId();
+			const idLocalAbastecimiento = new Types.ObjectId();
+			clientes.push({
+				_id: `${idDetalleCliente}`,
+				nombre: `${folioActual.Descripcion}`,
+				dni: `${folioActual.Dni}`,
+				telefono: `${folioActual.Telefono}`,
+				direccion: `${folioActual.Direccion}`,
+			});
+			ubicaciones.push({
+				_id: `${idUbicacionEntrega}`,
+				latitud: `${folioActual.Latitud}`,
+				longitud: `${folioActual.Longitud}`,
+				distrito: `${folioActual.Localidad}`,
+			});
+			horarios.push({
+				_id: `${idHorarioVisita}`,
+				inicioVisita: `${folioActual.InicioVisita}`,
+				finVisita: `${folioActual.FinVisita}`,
+			});
+			pedidos.push({
+				_id: `${idDetallePedido}`,
+				descripcionPedido: `${folioActual.Producto}`,
+			});
+			locales.push({
+				_id: `${idLocalAbastecimiento}`,
+				localAbastecimiento: `${folioActual.LocalAbastece}`,
+			});
+			entregas.push({
+				_id: `${idDetalleEntrega}`,
+				fechaEntrega: `${folioActual.FechaPactada}`,
+				idUbicacionEntrega: `${idUbicacionEntrega}`,
+				ordenEntrega: `${folioActual.Orden}`,
+				idHorarioVisita: `${idHorarioVisita}`,
+			});
+			folios.push({
+				numeroFolio: `${folioActual.Folio}`,
+				ruta: `${folioActual.IdRuta}`,
+				idDetalleCliente: `${idDetalleCliente}`,
+				idDetalleEntrega: `${idDetalleEntrega}`,
+				idDetallePedido: `${idDetallePedido}`,
+				idLocalAbastecimiento: `${idLocalAbastecimiento}`,
+			});
+		});
+		await this.detalleClienteModel.insertMany(clientes).catch(function (error) {
+			console.log(error);
+		});
+		await this.ubicacionEntregaModel.insertMany(ubicaciones).catch(function (error) {
+			console.log(error);
+		});
+		await this.horarioVisitaModel.insertMany(horarios).catch(function (error) {
+			console.log(error);
+		});
+		await this.detallePedidoModel.insertMany(pedidos).catch(function (error) {
+			console.log(error);
+		});
+		await this.localAbastecimientoModel.insertMany(locales).catch(function (error) {
+			console.log(error);
+		});
+		await this.detalleEntregaModel.insertMany(entregas).catch(function (error) {
+			console.log(error);
+		});
+		return await this.folioModel.insertMany(folios).catch(function (error) {
+			console.log(error);
+		});
 	}
 }

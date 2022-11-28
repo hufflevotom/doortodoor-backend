@@ -57,7 +57,7 @@ export class FoliosController {
 
 	@Post('/insertMany')
 	@ApiOperation({ summary: 'Cargar folios' })
-	async insertMany(@Body() body: ManyFoliosDto[]) {
+	async insertMany(@Body() body: ManyFoliosDto) {
 		const data = await this.foliosService.insertMany(body);
 		return customResponse('Folios', data);
 	}
