@@ -11,11 +11,13 @@ import { LocalAbastecimiento } from '../interfaces/localAbastecimiento.interface
 import { UbicacionEntrega } from '../interfaces/ubicacionEntrega.interface';
 //* DTO's
 import { FolioDto, FolioQueryLimitDto, ManyFoliosDto, UpdateFolioDto } from '../dto/folio.dto';
+import { ResponsablesService } from 'src/modules/transport/services/responsables.service';
 //* Services
 
 @Injectable()
 export class FoliosService {
 	constructor(
+		private responsableService: ResponsablesService,
 		@InjectModel('Folio') private readonly folioModel: Model<Folio>,
 		@InjectModel('DetalleCliente') private readonly detalleClienteModel: Model<DetalleCliente>,
 		@InjectModel('DetalleEntrega') private readonly detalleEntregaModel: Model<DetalleEntrega>,
@@ -331,6 +333,17 @@ export class FoliosService {
 			)
 			.sort({ ruta: 1 })
 			.distinct('ruta');
+	}
+
+	async validarEstadoCarga() {
+		const rutas = await this.getRutas();
+		const responsables = await this.responsableService.getResponsablesDia();
+		if (responsables.length > 0) {
+			return 2;
+		} else if (rutas.length > 0) {
+			return 1;
+		}
+		return 0;
 	}
 
 	async insertMany(dto: ManyFoliosDto) {

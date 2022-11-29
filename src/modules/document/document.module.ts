@@ -18,6 +18,7 @@ import { EvidenciasController } from './controllers/evidencias.controller';
 import { FoliosService } from './services/folios.service';
 import { EvidenciasService } from './services/evidencias.service';
 //* Modules
+import { TransportModule } from '../transport/transport.module';
 
 @Module({
 	imports: [
@@ -34,6 +35,7 @@ import { EvidenciasService } from './services/evidencias.service';
 			{ name: 'TipoFoto', schema: TipoFotoSchema },
 			{ name: 'UbicacionEntrega', schema: UbicacionEntregaSchema },
 		]),
+		TransportModule,
 	],
 	controllers: [FoliosController, EvidenciasController],
 	providers: [FoliosService, EvidenciasService],

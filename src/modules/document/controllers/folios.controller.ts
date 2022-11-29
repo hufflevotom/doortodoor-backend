@@ -37,6 +37,13 @@ export class FoliosController {
 		return customResponse('Rutas', data);
 	}
 
+	@Get('/validarEstadoCarga')
+	@ApiOperation({ summary: 'Validar estado de planificacion' })
+	async validarEstadoCarga() {
+		const data = await this.foliosService.validarEstadoCarga();
+		return customResponse('Rutas', data);
+	}
+
 	@Post()
 	@ApiOperation({ summary: 'Crear un folio' })
 	async create(@Body() body: FolioDto) {

@@ -17,6 +17,15 @@ export class ResponsablesService {
 		private usuarioService: UsuariosService,
 	) {}
 
+	async getResponsablesDia() {
+		return await this.responsableModel.find({
+			createdAt: {
+				$gte: new Date().setHours(0, 0, 0, 0),
+				$lte: new Date().setHours(23, 59, 59, 999),
+			},
+		});
+	}
+
 	async findOne(id: string): Promise<Responsable> {
 		return await this.responsableModel.findById(id);
 	}
