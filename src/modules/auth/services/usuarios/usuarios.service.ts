@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 //* Interfaces
 import { Usuario } from '../../interfaces/usuarios/usuario.interface';
@@ -39,6 +39,10 @@ export class UsuariosService {
 	}
 
 	async findOne(id: string): Promise<Usuario> {
+		return await this.usuarioModel.findById(id);
+	}
+
+	async findById(id: ObjectId): Promise<Usuario> {
 		return await this.usuarioModel.findById(id);
 	}
 

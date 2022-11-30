@@ -1,4 +1,6 @@
+import { ObjectId } from 'mongoose';
+
 export interface PayloadToken {
-	role: string;
-	sub: string;
+	role: ObjectId;
+	sub: ObjectId;
 }

@@ -22,7 +22,7 @@ export class JWTRegistroStrategy extends PassportStrategy(Strategy, 'jwt-registr
 	}
 
 	async validate(payload: PayloadToken) {
-		const usuario = await this.usuariosService.findOne(payload.sub);
+		const usuario = await this.usuariosService.findById(payload.sub);
 		return usuario;
 	}
 }

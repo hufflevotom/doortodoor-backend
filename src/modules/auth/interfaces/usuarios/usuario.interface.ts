@@ -1,13 +1,13 @@
-import { Document } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
 
 export interface Usuario extends Document {
-	_id: string;
+	_id: ObjectId;
 	documento: string;
 	contrasena: string;
 	nombre: string;
 	apellidos: string;
 	celular: string;
-	idTipoRol: string;
+	idTipoRol: ObjectId;
 	brevete: string;
 	createdAt: Date;
 	updatedAt: Date;
