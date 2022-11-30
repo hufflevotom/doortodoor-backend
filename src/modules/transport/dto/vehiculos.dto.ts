@@ -18,9 +18,8 @@ export class VehiculoDto {
 	@ApiProperty({ required: false })
 	modelo: string;
 
-	@IsOptional()
 	@IsDateString()
-	@ApiProperty({ required: false })
+	@ApiProperty({ required: true })
 	fechaFabricacion: string;
 
 	@IsString()
@@ -29,12 +28,12 @@ export class VehiculoDto {
 
 	@IsOptional()
 	@IsDateString()
-	@ApiProperty({ required: false })
+	@ApiProperty({ required: true })
 	vencimientoSoat: string;
 
 	@IsOptional()
 	@IsDateString()
-	@ApiProperty({ required: false })
+	@ApiProperty({ required: true })
 	vencimientoRevision: string;
 }
 
