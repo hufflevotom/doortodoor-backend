@@ -30,6 +30,24 @@ export class ResponsablesService {
 		return await this.responsableModel.findById(id);
 	}
 
+	async findByUser(idUsuario: string) {
+		return await this.responsableModel
+			.findOne({
+				idUsuario,
+				createdAt: {
+					$gte: new Date().setHours(0, 0, 0, 0),
+					$lte: new Date().setHours(23, 59, 59, 999),
+				},
+			})
+			.populate([
+				{
+					path: 'idVehiculo',
+					model: 'Vehiculo',
+					select: ['placa', 'modelo'],
+				},
+			]);
+	}
+
 	async create(dto: ResponsableDto): Promise<Responsable> {
 		const user = await this.usuarioService.findOne(dto.idUsuario);
 		if (!user) {

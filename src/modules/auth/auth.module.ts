@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigType } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -7,6 +7,7 @@ import config from 'src/config/config';
 import { UsuarioSchema } from './schemas/usuario.schema';
 import { TipoRolSchema } from './schemas/tipoRol.schema';
 //* Controllers
+import { AuthController } from './controllers/auth/auth.controller';
 import { UsuariosController } from './controllers/usuarios/usuarios.controller';
 import { RolesController } from './controllers/roles/roles.controller';
 //* Services
@@ -17,7 +18,8 @@ import { AuthService } from './services/auth/auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JWTStrategy } from './strategies/jwt.strategy';
 import { JWTRegistroStrategy } from './strategies/jwt-registro.strategy';
-import { AuthController } from './controllers/auth/auth.controller';
+//* Modules
+import { TransportModule } from '../transport/transport.module';
 
 @Module({
 	imports: [
@@ -32,6 +34,7 @@ import { AuthController } from './controllers/auth/auth.controller';
 			}),
 			inject: [config.KEY],
 		}),
+		forwardRef(() => TransportModule),
 	],
 	providers: [
 		UsuariosService,

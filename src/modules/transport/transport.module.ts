@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 //* Schemas
 import { VehiculoSchema } from './schemas/vehiculo.schema';
@@ -22,7 +22,7 @@ import { EstadoVehiculoService } from './services/estado-vehiculo/estado-vehicul
 			{ name: 'EstadoVehiculo', schema: EstadoVehiculoSchema },
 			{ name: 'Responsable', schema: ResponsableSchema },
 		]),
-		AuthModule,
+		forwardRef(() => AuthModule),
 	],
 	controllers: [VehiculosController, ResponsablesController, EstadoVehiculoController],
 	providers: [VehiculosService, ResponsablesService, EstadoVehiculoService],
