@@ -5,6 +5,9 @@
 	"author": "",
 	"private": true,
 	"license": "UNLICENSED",
+	"engines": {
+		"node": "16.15.1"
+	},
 	"scripts": {
 		"build:prod": "nest build && mkdirp ./dist/public && mkdirp ./dist/public/files && cpy ./public/* ./dist/public && cpy package.json dist/ ",
 		"prebuild": "rimraf dist",
