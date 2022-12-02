@@ -27,8 +27,10 @@ export class AuthService {
 		let usuario = JSON.parse(JSON.stringify(user));
 		if (usuario.idTipoRol === '60bb0fad68bcb70590c9eccd') {
 			const resp = await this.responsableService.findByUser(usuario._id);
-			const responsable = JSON.parse(JSON.stringify(resp));
-			usuario = { ...usuario, idVehiculo: responsable.idVehiculo, ruta: responsable.ruta };
+			if (resp) {
+				const responsable = JSON.parse(JSON.stringify(resp));
+				usuario = { ...usuario, idVehiculo: responsable.idVehiculo, ruta: responsable.ruta };
+			}
 		}
 		return {
 			access_token: this.jwtService.sign(payload),

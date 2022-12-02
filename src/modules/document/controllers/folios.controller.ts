@@ -30,6 +30,13 @@ export class FoliosController {
 		return customResponse('Folios', model.data, 200, model.total);
 	}
 
+	@Get('/ruta/:ruta')
+	@ApiOperation({ summary: 'Obtener los folios a entregar' })
+	async findByRuta(@Param('ruta') ruta: string) {
+		const data = await this.foliosService.findByRuta(ruta);
+		return customResponse('Rutas', data);
+	}
+
 	@Get('/rutas')
 	@ApiOperation({ summary: 'Obtener las rutas a planificar' })
 	async rutas() {

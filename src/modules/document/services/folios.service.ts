@@ -120,6 +120,53 @@ export class FoliosService {
 		return { data, total };
 	}
 
+	async findByRuta(ruta: string) {
+		const populate = [
+			{
+				path: 'idDetalleCliente',
+				model: 'DetalleCliente',
+				select: ['nombre', 'dni', 'telefono', 'direccion'],
+			},
+			{
+				path: 'idDetalleEntrega',
+				model: 'DetalleEntrega',
+				populate: [
+					{
+						path: 'idUbicacionEntrega',
+						model: 'UbicacionEntrega',
+						select: ['latitud', 'longitud', 'distrito'],
+					},
+					{
+						path: 'idHorarioVisita',
+						model: 'HorarioVisita',
+						select: ['inicioVisita', 'finVisita'],
+					},
+				],
+				select: ['fechaEntrega', 'idUbicacionEntrega', 'ordenEntrega', 'idHorarioVisita'],
+			},
+			{
+				path: 'idDetallePedido',
+				model: 'DetallePedido',
+				select: ['descripcionPedido'],
+			},
+			{
+				path: 'idLocalAbastecimiento',
+				model: 'LocalAbastecimiento',
+				select: ['localAbastecimiento'],
+			},
+		];
+
+		const fechaActual = await this.detalleEntregaModel
+			.find({ fechaEntrega: new Date('2022-12-01') })
+			.select(['_id', 'ordenEntrega'])
+			.sort({ ordenEntrega: 1 });
+
+		const resp = await this.folioModel
+			.find({ ruta: ruta, idDetalleEntrega: fechaActual })
+			.populate(populate);
+		return resp;
+	}
+
 	async findOne(id: string): Promise<Folio> {
 		return await this.folioModel.findById(id).populate([
 			{
