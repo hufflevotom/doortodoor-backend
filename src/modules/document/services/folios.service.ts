@@ -157,7 +157,7 @@ export class FoliosService {
 		];
 
 		const fechaActual = await this.detalleEntregaModel
-			.find({ fechaEntrega: new Date('2022-12-01') })
+			.find({ fechaEntrega: new Date(new Date().toISOString().split('T')[0]) })
 			.select(['_id', 'ordenEntrega'])
 			.sort({ ordenEntrega: 1 });
 

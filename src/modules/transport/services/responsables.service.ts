@@ -31,12 +31,13 @@ export class ResponsablesService {
 	}
 
 	async findByUser(idUsuario: string) {
+		const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
 		return await this.responsableModel
 			.findOne({
 				idUsuario,
 				createdAt: {
-					$gte: new Date().setHours(0, 0, 0, 0),
-					$lte: new Date().setHours(23, 59, 59, 999),
+					$gte: yesterday.setHours(0, 0, 0, 0),
+					$lte: yesterday.setHours(23, 59, 59, 999),
 				},
 			})
 			.populate([
