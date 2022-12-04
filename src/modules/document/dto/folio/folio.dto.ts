@@ -129,7 +129,11 @@ export class ManyFoliosDto {
 	name: FolioFileDto[];
 }
 
-export class UpdateFolioDto extends PartialType(FolioDto) {}
+export class UpdateFolioDto extends PartialType(FolioDto) {
+	@IsString()
+	@ApiProperty({ required: true })
+	idEstado: string;
+}
 
 export class FolioQueryLimitDto {
 	@IsNumber()

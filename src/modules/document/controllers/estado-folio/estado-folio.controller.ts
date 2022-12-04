@@ -12,21 +12,21 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { QueryLimitDto } from 'src/common/queryLimit.dto';
 import { customResponse } from 'src/common/response';
-import { EstadoVehiculoDto, UpdateEstadoVehiculoDto } from '../../dto/estadoVehiculo.dto';
-import { EstadoVehiculoService } from '../../services/estado-vehiculo/estado-vehiculo.service';
+import { EstadoFolioDto, UpdateEstadoFolioDto } from '../../dto/estado-folio/estadoFolio.dto';
+import { EstadoFolioService } from '../../services/estado-folio/estado-folio.service';
 
-@ApiTags('Estado Vehiculo')
-@Controller('transport/estadoVehiculo')
-export class EstadoVehiculoController {
-	constructor(private readonly estadoVehiculoService: EstadoVehiculoService) {}
+@ApiTags('Estado Folio')
+@Controller('document/estadoFolio')
+export class EstadoFolioController {
+	constructor(private readonly estadoFolioService: EstadoFolioService) {}
 
 	@Get()
 	@ApiOperation({
-		summary: 'Obtener todos los estados del vehículo',
+		summary: 'Obtener todos los estados del folio',
 	})
 	async findAll(@Query() query: QueryLimitDto) {
-		const model = await this.estadoVehiculoService.findAll(query);
-		const total = await this.estadoVehiculoService.count();
+		const model = await this.estadoFolioService.findAll(query);
+		const total = await this.estadoFolioService.count();
 		return customResponse('Estado', model, 200, total);
 	}
 
@@ -35,7 +35,7 @@ export class EstadoVehiculoController {
 		summary: 'Obtener un estado por ID',
 	})
 	async findOne(@Param('id') id: string) {
-		const model = await this.estadoVehiculoService.findOne(id);
+		const model = await this.estadoFolioService.findOne(id);
 		return customResponse('Estado', model);
 	}
 
@@ -43,8 +43,8 @@ export class EstadoVehiculoController {
 	@ApiOperation({
 		summary: 'Crear un estado',
 	})
-	async create(@Body() body: EstadoVehiculoDto) {
-		const model = await this.estadoVehiculoService.create(body);
+	async create(@Body() body: EstadoFolioDto) {
+		const model = await this.estadoFolioService.create(body);
 		return customResponse('Estado creada', model, 201);
 	}
 
@@ -52,8 +52,8 @@ export class EstadoVehiculoController {
 	@ApiOperation({
 		summary: 'Actualizar un estado',
 	})
-	async update(@Param('id') id: string, @Body() body: UpdateEstadoVehiculoDto) {
-		const model = await this.estadoVehiculoService.update(id, body);
+	async update(@Param('id') id: string, @Body() body: UpdateEstadoFolioDto) {
+		const model = await this.estadoFolioService.update(id, body);
 
 		return customResponse('Estado actualizado', model);
 	}
@@ -63,7 +63,7 @@ export class EstadoVehiculoController {
 		summary: 'Eliminar un estado',
 	})
 	async delete(@Param('id') id: string) {
-		const model = await this.estadoVehiculoService.delete(id);
+		const model = await this.estadoFolioService.delete(id);
 		if (model) {
 			return customResponse('Estado eliminado');
 		}

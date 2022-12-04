@@ -2,22 +2,29 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 //* Interfaces
-import { Folio } from '../interfaces/folio.interface';
-import { DetalleCliente } from '../interfaces/detalleCliente.interface';
-import { DetalleEntrega } from '../interfaces/detalleEntrega.interface';
-import { DetallePedido } from '../interfaces/detallePedido.interface';
-import { HorarioVisita } from '../interfaces/horarioVisita.interface';
-import { LocalAbastecimiento } from '../interfaces/localAbastecimiento.interface';
-import { UbicacionEntrega } from '../interfaces/ubicacionEntrega.interface';
+import { Folio } from '../../interfaces/folio.interface';
+import { DetalleCliente } from '../../interfaces/detalleCliente.interface';
+import { DetalleEntrega } from '../../interfaces/detalleEntrega.interface';
+import { DetallePedido } from '../../interfaces/detallePedido.interface';
+import { HorarioVisita } from '../../interfaces/horarioVisita.interface';
+import { LocalAbastecimiento } from '../../interfaces/localAbastecimiento.interface';
+import { UbicacionEntrega } from '../../interfaces/ubicacionEntrega.interface';
 //* DTO's
-import { FolioDto, FolioQueryLimitDto, ManyFoliosDto, UpdateFolioDto } from '../dto/folio.dto';
-import { ResponsablesService } from 'src/modules/transport/services/responsables.service';
+import {
+	FolioDto,
+	FolioQueryLimitDto,
+	ManyFoliosDto,
+	UpdateFolioDto,
+} from '../../dto/folio/folio.dto';
 //* Services
+import { ResponsablesService } from 'src/modules/transport/services/responsables.service';
+import { EstadoFolioService } from '../estado-folio/estado-folio.service';
 
 @Injectable()
 export class FoliosService {
 	constructor(
 		private responsableService: ResponsablesService,
+		private estadoFolioService: EstadoFolioService,
 		@InjectModel('Folio') private readonly folioModel: Model<Folio>,
 		@InjectModel('DetalleCliente') private readonly detalleClienteModel: Model<DetalleCliente>,
 		@InjectModel('DetalleEntrega') private readonly detalleEntregaModel: Model<DetalleEntrega>,
@@ -64,6 +71,11 @@ export class FoliosService {
 				path: 'idLocalAbastecimiento',
 				model: 'LocalAbastecimiento',
 				select: ['localAbastecimiento'],
+			},
+			{
+				path: 'idEstado',
+				model: 'EstadoFolio',
+				select: ['descripcion'],
 			},
 		];
 		if (query.criterio === 'numeroFolio') {
@@ -154,6 +166,11 @@ export class FoliosService {
 				model: 'LocalAbastecimiento',
 				select: ['localAbastecimiento'],
 			},
+			{
+				path: 'idEstado',
+				model: 'EstadoFolio',
+				select: ['descripcion'],
+			},
 		];
 		const today = new Date();
 		const dateParsed = today
@@ -172,13 +189,23 @@ export class FoliosService {
 			.select(['_id', 'ordenEntrega'])
 			.sort({ ordenEntrega: 1 });
 		const resp = await this.folioModel
-			.find({ ruta: ruta, idDetalleEntrega: fechaActual })
+			.find({
+				ruta: ruta,
+				idDetalleEntrega: fechaActual,
+				idEstado: {
+					$nin: [
+						'638d0c4d9a3096d13d7e2c1e',
+						'638d0c479a3096d13d7e2c1c',
+						'638d0c3e9a3096d13d7e2c1a',
+					],
+				},
+			})
 			.populate(populate);
 		return resp;
 	}
 
 	async findOne(id: string): Promise<Folio> {
-		return await this.folioModel.findById(id).populate([
+		const populate = [
 			{
 				path: 'idDetalleCliente',
 				model: 'DetalleCliente',
@@ -211,7 +238,13 @@ export class FoliosService {
 				model: 'LocalAbastecimiento',
 				select: ['localAbastecimiento'],
 			},
-		]);
+			{
+				path: 'idEstado',
+				model: 'EstadoFolio',
+				select: ['descripcion'],
+			},
+		];
+		return await this.folioModel.findById(id).populate(populate);
 	}
 
 	async create(dto: FolioDto): Promise<Folio> {
@@ -263,6 +296,7 @@ export class FoliosService {
 		newModel.idDetalleEntrega = detalleEntrega;
 		newModel.idDetallePedido = detallePedido;
 		newModel.idLocalAbastecimiento = localAbastecimiento;
+		newModel.idEstado = `638d0c359a3096d13d7e2c18`;
 
 		return await newModel.save();
 	}
@@ -362,6 +396,14 @@ export class FoliosService {
 			modelActualizar.idLocalAbastecimiento = localAbastecimiento;
 		}
 
+		if (dto.idEstado) {
+			const estadoFolio = await this.estadoFolioService.findOne(dto.idEstado);
+			if (!estadoFolio) {
+				throw new NotFoundException('El estado no se guardó correctamente');
+			}
+			modelActualizar.idEstado = dto.idEstado;
+		}
+
 		return await this.folioModel.findByIdAndUpdate(id, modelActualizar, { new: true });
 	}
 
@@ -458,6 +500,7 @@ export class FoliosService {
 				idDetalleEntrega: `${idDetalleEntrega}`,
 				idDetallePedido: `${idDetallePedido}`,
 				idLocalAbastecimiento: `${idLocalAbastecimiento}`,
+				idEstado: `638d0c359a3096d13d7e2c18`,
 			});
 		});
 

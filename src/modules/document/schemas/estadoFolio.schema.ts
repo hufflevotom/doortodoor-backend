@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 
-export const EstadoEvidenciaSchema = new Schema(
+export const EstadoFolioSchema = new Schema(
 	{
 		descripcion: { type: String, required: true },
 	},

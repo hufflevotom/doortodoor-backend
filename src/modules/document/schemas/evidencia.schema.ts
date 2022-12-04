@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 
-export const EstadoVehiculoSchema = new Schema(
+export const EvidenciaSchema = new Schema(
 	{
 		idFolio: { type: Schema.Types.ObjectId, ref: 'Folio', required: true },
 		idResponsable: { type: Schema.Types.ObjectId, ref: 'Responsable', required: true },

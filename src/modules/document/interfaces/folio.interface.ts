@@ -3,6 +3,7 @@ import { Document, ObjectId } from 'mongoose';
 import { DetalleCliente } from './detalleCliente.interface';
 import { DetalleEntrega } from './detalleEntrega.interface';
 import { DetallePedido } from './detallePedido.interface';
+import { EstadoFolio } from './estadoFolio.interface';
 import { LocalAbastecimiento } from './localAbastecimiento.interface';
 
 export interface Folio extends Document {
@@ -13,6 +14,7 @@ export interface Folio extends Document {
 	idDetalleEntrega: DetalleEntrega;
 	idDetallePedido: DetallePedido;
 	idLocalAbastecimiento: LocalAbastecimiento;
+	idEstado: string;
 	createdAt: Date;
 	updatedAt: Date;
 }

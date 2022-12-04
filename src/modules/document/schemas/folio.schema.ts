@@ -12,6 +12,11 @@ export const FolioSchema = new Schema(
 			ref: 'LocalAbastecimiento',
 			required: true,
 		},
+		idEstado: {
+			type: Schema.Types.ObjectId,
+			ref: 'EstadoFolio',
+			required: true,
+		},
 	},
 	{
 		timestamps: true,

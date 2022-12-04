@@ -13,10 +13,14 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 //* Utils
 import { customResponse } from 'src/common/response';
 //* Services
-import { FoliosService } from '../services/folios.service';
+import { FoliosService } from '../../services/folios/folios.service';
 //* DTO's
-import { FolioDto, FolioQueryLimitDto, ManyFoliosDto, UpdateFolioDto } from '../dto/folio.dto';
-import { QueryLimitDto } from 'src/common/queryLimit.dto';
+import {
+	FolioDto,
+	FolioQueryLimitDto,
+	ManyFoliosDto,
+	UpdateFolioDto,
+} from '../../dto/folio/folio.dto';
 
 @ApiTags('Folios')
 @Controller('document/folios')
