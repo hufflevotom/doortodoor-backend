@@ -155,12 +155,22 @@ export class FoliosService {
 				select: ['localAbastecimiento'],
 			},
 		];
-
+		const today = new Date();
+		const dateParsed = today
+			.toLocaleDateString('es-PE', { timeZone: 'America/Lima' })
+			.split('/')
+			.reverse();
+		dateParsed[1] = dateParsed[1].padStart(2, '0');
+		dateParsed[2] = dateParsed[2].padStart(2, '0');
 		const fechaActual = await this.detalleEntregaModel
-			.find({ fechaEntrega: new Date(new Date().toISOString().split('T')[0]) })
+			.find({
+				fechaEntrega: {
+					$gte: new Date(`${dateParsed.join('-')}T00:00:00.000Z`),
+					$lte: new Date(`${dateParsed.join('-')}T23:59:59.999Z`),
+				},
+			})
 			.select(['_id', 'ordenEntrega'])
 			.sort({ ordenEntrega: 1 });
-
 		const resp = await this.folioModel
 			.find({ ruta: ruta, idDetalleEntrega: fechaActual })
 			.populate(populate);

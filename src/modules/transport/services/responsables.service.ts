@@ -32,12 +32,18 @@ export class ResponsablesService {
 
 	async findByUser(idUsuario: string) {
 		const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
+		const dateParsed = yesterday
+			.toLocaleDateString('es-PE', { timeZone: 'America/Lima' })
+			.split('/')
+			.reverse();
+		dateParsed[1] = dateParsed[1].padStart(2, '0');
+		dateParsed[2] = dateParsed[2].padStart(2, '0');
 		return await this.responsableModel
 			.findOne({
 				idUsuario,
 				createdAt: {
-					$gte: yesterday.setHours(0, 0, 0, 0),
-					$lte: yesterday.setHours(23, 59, 59, 999),
+					$gte: new Date(`${dateParsed.join('-')}T00:00:00.000Z`),
+					$lte: new Date(`${dateParsed.join('-')}T23:59:59.999Z`),
 				},
 			})
 			.populate([
@@ -59,6 +65,8 @@ export class ResponsablesService {
 			throw new NotFoundException('El vehículo no existe');
 		}
 		const newModel = new this.responsableModel(dto);
+		newModel.createdAt = new Date();
+		newModel.updatedAt = new Date();
 		return await newModel.save();
 	}
 
@@ -69,6 +77,8 @@ export class ResponsablesService {
 				idUsuario: responsable.idUsuario,
 				idVehiculo: responsable.idVehiculo,
 				ruta: responsable.ruta,
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			});
 		});
 		return await this.responsableModel.insertMany(responsables);
@@ -84,14 +94,18 @@ export class ResponsablesService {
 			if (!user) {
 				throw new NotFoundException('El usuario no existe');
 			}
+			modelActualizar.idUsuario = dto.idUsuario;
 		}
 		if (dto.idVehiculo) {
 			const vehicle = await this.vehiculoService.findOne(dto.idVehiculo);
 			if (!vehicle) {
 				throw new NotFoundException('El vehículo no existe');
 			}
+			modelActualizar.idVehiculo = dto.idVehiculo;
 		}
-		return await this.responsableModel.findByIdAndUpdate(id, dto, { new: true });
+		modelActualizar.createdAt = new Date();
+		modelActualizar.updatedAt = new Date();
+		return await this.responsableModel.findByIdAndUpdate(id, modelActualizar, { new: true });
 	}
 
 	async delete(id: string): Promise<Responsable> {
