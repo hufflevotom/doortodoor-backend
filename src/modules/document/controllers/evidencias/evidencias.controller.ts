@@ -12,7 +12,7 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { QueryLimitDto } from 'src/common/queryLimit.dto';
 import { customResponse } from 'src/common/response';
-import { EvidenciaDto, UpdateEvidenciaDto } from '../../dto/evidencia/evidencia.dto';
+import { EvidenciaDto, ReportadoDto, UpdateEvidenciaDto } from '../../dto/evidencia/evidencia.dto';
 import { EvidenciasService } from '../../services/evidencias/evidencias.service';
 
 @ApiTags('Evidencias')
@@ -46,6 +46,15 @@ export class EvidenciasController {
 	async findOne(@Param('id') id: string) {
 		const model = await this.evidenciasService.findOne(id);
 		return customResponse('Evidencia', model);
+	}
+
+	@Post('/reportar')
+	@ApiOperation({
+		summary: 'Crear un reporte',
+	})
+	async createReporte(@Body() body: ReportadoDto) {
+		const model = await this.evidenciasService.createReporte(body);
+		return customResponse('Reporte creado', model, 201);
 	}
 
 	@Post()

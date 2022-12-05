@@ -46,3 +46,22 @@ export class EvidenciaDto {
 }
 
 export class UpdateEvidenciaDto extends PartialType(EvidenciaDto) {}
+
+export class ReportadoDto {
+	@IsOptional()
+	@IsString()
+	@ApiProperty({ required: false })
+	_id: string;
+
+	@IsString()
+	@ApiProperty({ required: true })
+	idResponsable: string;
+
+	@IsString()
+	@ApiProperty({ required: true })
+	idFolio: string;
+
+	@IsString()
+	@ApiProperty({ required: false })
+	justificacion: string;
+}

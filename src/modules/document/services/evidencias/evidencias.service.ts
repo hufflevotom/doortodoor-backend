@@ -10,7 +10,7 @@ import { EstadoFolioService } from '../estado-folio/estado-folio.service';
 import { FoliosService } from '../folios/folios.service';
 //* DTO's
 import { QueryLimitDto } from 'src/common/queryLimit.dto';
-import { EvidenciaDto, UpdateEvidenciaDto } from '../../dto/evidencia/evidencia.dto';
+import { EvidenciaDto, ReportadoDto, UpdateEvidenciaDto } from '../../dto/evidencia/evidencia.dto';
 
 @Injectable()
 export class EvidenciasService {
@@ -101,6 +101,30 @@ export class EvidenciasService {
 			});
 		}
 		await this.foliosService.updateEstadoFolio(dto.idFolio, dto.idEstado);
+		return evidencia;
+	}
+
+	async createReporte(dto: ReportadoDto): Promise<Evidencia> {
+		const idReportado = '638d97194d8439da75e1566d';
+		const newModel = new this.evidenciaModel(dto);
+		const responsable = await this.responsableService.findOne(dto.idResponsable);
+		if (!responsable) {
+			throw new NotFoundException('Responsable no encontrado');
+		}
+		newModel.idResponsable = dto.idResponsable;
+		newModel.idEstadoEvidencia = idReportado;
+		const folio = await this.foliosService.findOne(dto.idFolio);
+		if (!folio) {
+			throw new NotFoundException('Folio no encontrado');
+		}
+		newModel.idFolio = dto.idFolio;
+
+		if (dto.justificacion) {
+			newModel.justificacion = dto.justificacion;
+		}
+
+		const evidencia = await newModel.save();
+		await this.foliosService.updateEstadoFolio(dto.idFolio, idReportado);
 		return evidencia;
 	}
 
