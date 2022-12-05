@@ -91,15 +91,15 @@ export class EvidenciasService {
 		}
 
 		const evidencia = await newModel.save();
-
-		dto.imagenes.forEach(async element => {
-			const newFoto = new this.fotoClienteModel(element);
-			newFoto.idTipoFoto = element.idTipoFoto;
-			newFoto.urlFoto = element.urlFoto;
-			newFoto.idEvidencia = evidencia._id;
-			await newFoto.save();
-		});
-
+		if (dto.imagenes) {
+			dto.imagenes.forEach(async element => {
+				const newFoto = new this.fotoClienteModel(element);
+				newFoto.idTipoFoto = element.idTipoFoto;
+				newFoto.urlFoto = element.urlFoto;
+				newFoto.idEvidencia = evidencia._id;
+				await newFoto.save();
+			});
+		}
 		return evidencia;
 	}
 
