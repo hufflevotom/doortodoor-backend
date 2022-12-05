@@ -37,10 +37,11 @@ export class EvidenciaDto {
 	@ApiProperty({ required: false })
 	longitudFinal: string;
 
+	@IsOptional()
 	@IsArray()
 	@ValidateNested({ each: true })
 	@Type(() => FotoClienteDto)
-	@ApiProperty({ type: [FotoClienteDto], required: true })
+	@ApiProperty({ type: [FotoClienteDto], required: false })
 	imagenes: FotoClienteDto[];
 }
 
