@@ -100,6 +100,7 @@ export class EvidenciasService {
 				await newFoto.save();
 			});
 		}
+		await this.foliosService.updateEstadoFolio(dto.idFolio, dto.idEstado);
 		return evidencia;
 	}
 
@@ -139,6 +140,11 @@ export class EvidenciasService {
 		if (dto.longitudFinal) {
 			model.longitudFinal = dto.longitudFinal;
 		}
+
+		if (dto.idFolio && dto.idEstado) {
+			await this.foliosService.updateEstadoFolio(dto.idFolio, dto.idEstado);
+		}
+
 		return this.evidenciaModel.findByIdAndUpdate(id, model, { new: true });
 	}
 

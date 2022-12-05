@@ -304,7 +304,7 @@ export class FoliosService {
 	async update(id: string, dto: UpdateFolioDto): Promise<Folio> {
 		const modelActualizar = await this.folioModel.findById(id);
 		if (!modelActualizar) {
-			throw new NotFoundException('El vehiculo no existe');
+			throw new NotFoundException('El folio no existe');
 		}
 
 		modelActualizar.numeroFolio = dto.numeroFolio;
@@ -443,6 +443,19 @@ export class FoliosService {
 			return 1;
 		}
 		return 0;
+	}
+
+	async updateEstadoFolio(idFolio: string, idEstado: string) {
+		const folio = await this.folioModel.findById(idFolio);
+		if (!folio) {
+			throw new NotFoundException('El folio no existe');
+		}
+		const estado = await this.estadoFolioService.findOne(idEstado);
+		if (!estado) {
+			throw new NotFoundException('El estado no existe');
+		}
+		folio.idEstado = idEstado;
+		return await this.folioModel.findByIdAndUpdate(idFolio, folio, { new: true });
 	}
 
 	async insertMany(dto: ManyFoliosDto) {
