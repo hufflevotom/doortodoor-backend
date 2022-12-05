@@ -8,7 +8,6 @@ export interface Evidencia extends Document {
 	justificacion: string;
 	latitudFinal: string;
 	longitudFinal: string;
-	numeroVisitas: number;
 	createdAt: Date;
 	updatedAt: Date;
 }

@@ -29,7 +29,12 @@ export class AuthService {
 			const resp = await this.responsableService.findByUser(usuario._id);
 			if (resp) {
 				const responsable = JSON.parse(JSON.stringify(resp));
-				usuario = { ...usuario, idVehiculo: responsable.idVehiculo, ruta: responsable.ruta };
+				usuario = {
+					...usuario,
+					idVehiculo: responsable.idVehiculo,
+					ruta: responsable.ruta,
+					idResponsable: responsable._id,
+				};
 			}
 		}
 		return {
