@@ -77,10 +77,10 @@ export class UsuariosController {
 		throw new NotFoundException('Usuario no encontrado');
 	}
 
-	@Post('/login')
-	@ApiOperation({ summary: 'Login de Usuario' })
-	async login(@Body() body: LoginUsuarioDto) {
-		const loginResult = await this.usuariosService.login(body.documento, body.contrasena);
-		return customResponse('login', loginResult);
-	}
+	// @Post('/login')
+	// @ApiOperation({ summary: 'Login de Usuario' })
+	// async login(@Body() body: LoginUsuarioDto) {
+	// 	const loginResult = await this.usuariosService.login(body.documento, body.contrasena);
+	// 	return customResponse('login', loginResult);
+	// }
 }
