@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ResponsablesService } from 'src/modules/transport/services/responsables.service';
 // * Interfaces
@@ -35,6 +35,8 @@ export class AuthService {
 					ruta: responsable.ruta,
 					idResponsable: responsable._id,
 				};
+			} else {
+				throw new NotFoundException('No se registró una ruta para hoy');
 			}
 		}
 		return {
