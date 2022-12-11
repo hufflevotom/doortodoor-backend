@@ -459,6 +459,20 @@ export class FoliosService {
 		return await this.folioModel.findByIdAndUpdate(idFolio, folio, { new: true });
 	}
 
+	async updateActiveEstadoFolio(idFolio: string) {
+		const idEstado = '6395724c37c5eae0e27742fc';
+		const folio = await this.folioModel.findById(idFolio);
+		if (!folio) {
+			throw new NotFoundException('El folio no existe');
+		}
+		const estado = await this.estadoFolioService.findOne(idEstado);
+		if (!estado) {
+			throw new NotFoundException('El estado no existe');
+		}
+		folio.idEstado = idEstado;
+		return await this.folioModel.findByIdAndUpdate(idFolio, folio, { new: true });
+	}
+
 	async insertMany(dto: ManyFoliosDto) {
 		const clientes = [];
 		const ubicaciones = [];

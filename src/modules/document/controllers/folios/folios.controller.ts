@@ -69,6 +69,13 @@ export class FoliosController {
 		return customResponse('Folio', data);
 	}
 
+	@Put('/activo/:id')
+	@ApiOperation({ summary: 'Cambiar estado de un folio a activo' })
+	async setActiveFolio(@Param('id') id: string) {
+		const data = await this.foliosService.updateActiveEstadoFolio(id);
+		return customResponse('Folio', data);
+	}
+
 	@Put('/:id')
 	@ApiOperation({ summary: 'Actualizar un folio' })
 	async update(@Param('id') id: string, @Body() body: UpdateFolioDto) {
