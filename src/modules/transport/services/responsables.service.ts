@@ -27,7 +27,18 @@ export class ResponsablesService {
 	}
 
 	async findOne(id: string): Promise<Responsable> {
-		return await this.responsableModel.findById(id);
+		return await this.responsableModel.findById(id).populate([
+			{
+				path: 'idVehiculo',
+				model: 'Vehiculo',
+				select: ['placa', 'marca', 'color', 'modelo'],
+			},
+			{
+				path: 'idUsuario',
+				model: 'Usuario',
+				select: ['documento', 'nombre', 'apellidos', 'celular'],
+			},
+		]);
 	}
 
 	async findByUser(idUsuario: string) {

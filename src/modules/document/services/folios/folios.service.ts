@@ -14,6 +14,7 @@ import {
 	FolioDto,
 	FolioQueryLimitDto,
 	ManyFoliosDto,
+	ManyFoliosIdsDto,
 	UpdateFolioDto,
 } from '../../dto/folio/folio.dto';
 //* Services
@@ -246,6 +247,51 @@ export class FoliosService {
 			},
 		];
 		return await this.folioModel.findById(id).populate(populate);
+	}
+
+	async findMany(dto: ManyFoliosIdsDto) {
+		const populate = [
+			{
+				path: 'idDetalleCliente',
+				model: 'DetalleCliente',
+				select: ['nombre', 'dni', 'telefono', 'direccion'],
+			},
+			{
+				path: 'idDetalleEntrega',
+				model: 'DetalleEntrega',
+				populate: [
+					{
+						path: 'idUbicacionEntrega',
+						model: 'UbicacionEntrega',
+						select: ['latitud', 'longitud', 'distrito'],
+					},
+					{
+						path: 'idHorarioVisita',
+						model: 'HorarioVisita',
+						select: ['inicioVisita', 'finVisita'],
+					},
+				],
+				select: ['fechaEntrega', 'idUbicacionEntrega', 'ordenEntrega', 'idHorarioVisita'],
+			},
+			{
+				path: 'idDetallePedido',
+				model: 'DetallePedido',
+				select: ['descripcionPedido'],
+			},
+			{
+				path: 'idLocalAbastecimiento',
+				model: 'LocalAbastecimiento',
+				select: ['localAbastecimiento'],
+			},
+			{
+				path: 'idEstado',
+				model: 'EstadoFolio',
+				select: ['descripcion'],
+			},
+		];
+		//buscar por array de ids
+		const resp = await this.folioModel.find({ _id: { $in: dto.ids } }).populate(populate);
+		return resp;
 	}
 
 	async create(dto: FolioDto): Promise<Folio> {

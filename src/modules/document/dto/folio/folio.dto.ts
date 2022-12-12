@@ -152,3 +152,9 @@ export class FolioQueryLimitDto {
 	@ApiProperty({ required: false })
 	busqueda: string;
 }
+
+export class ManyFoliosIdsDto {
+	@IsArray()
+	@ApiProperty({ type: [], required: true })
+	ids: string[];
+}

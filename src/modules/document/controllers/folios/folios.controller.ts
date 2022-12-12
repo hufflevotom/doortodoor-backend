@@ -19,6 +19,7 @@ import {
 	FolioDto,
 	FolioQueryLimitDto,
 	ManyFoliosDto,
+	ManyFoliosIdsDto,
 	UpdateFolioDto,
 } from '../../dto/folio/folio.dto';
 
@@ -99,6 +100,12 @@ export class FoliosController {
 	@ApiOperation({ summary: 'Cargar folios' })
 	async insertMany(@Body() body: ManyFoliosDto) {
 		const data = await this.foliosService.insertMany(body);
+		return customResponse('Folios', data);
+	}
+	@Post('/multiples')
+	@ApiOperation({ summary: 'Obtener múltiples folios' })
+	async getMany(@Body() body: ManyFoliosIdsDto) {
+		const data = await this.foliosService.findMany(body);
 		return customResponse('Folios', data);
 	}
 }
