@@ -20,6 +20,7 @@ import {
 //* Services
 import { ResponsablesService } from 'src/modules/transport/services/responsables.service';
 import { EstadoFolioService } from '../estado-folio/estado-folio.service';
+import { QueryLimitDto } from 'src/common/queryLimit.dto';
 
 @Injectable()
 export class FoliosService {
@@ -81,7 +82,7 @@ export class FoliosService {
 		];
 		if (query.criterio === 'numeroFolio') {
 			const numerosFolio = await this.folioModel
-				.find({ numeroFolio: query.busqueda })
+				.find({ numeroFolio: { $regex: new RegExp(query.busqueda, 'i') } })
 				.select('_id');
 			data = await this.folioModel
 				.find({ numeroFolio: query.busqueda })
@@ -202,6 +203,84 @@ export class FoliosService {
 					],
 				},
 			})
+			.populate(populate);
+		return resp;
+	}
+
+	async getAllByDate(query: QueryLimitDto, fecha: string) {
+		const populate = [
+			{
+				path: 'idDetalleCliente',
+				model: 'DetalleCliente',
+				select: ['nombre', 'dni', 'telefono', 'direccion'],
+			},
+			{
+				path: 'idDetalleEntrega',
+				model: 'DetalleEntrega',
+				populate: [
+					{
+						path: 'idUbicacionEntrega',
+						model: 'UbicacionEntrega',
+						select: ['latitud', 'longitud', 'distrito'],
+					},
+					{
+						path: 'idHorarioVisita',
+						model: 'HorarioVisita',
+						select: ['inicioVisita', 'finVisita'],
+					},
+				],
+				select: ['fechaEntrega', 'idUbicacionEntrega', 'ordenEntrega', 'idHorarioVisita'],
+			},
+			{
+				path: 'idDetallePedido',
+				model: 'DetallePedido',
+				select: ['descripcionPedido'],
+			},
+			{
+				path: 'idLocalAbastecimiento',
+				model: 'LocalAbastecimiento',
+				select: ['localAbastecimiento'],
+			},
+			{
+				path: 'idEstado',
+				model: 'EstadoFolio',
+				select: ['descripcion'],
+			},
+		];
+		const today = new Date(fecha);
+		const dateParsed = today
+			.toLocaleDateString('es-PE', { timeZone: 'America/Lima' })
+			.split('/')
+			.reverse();
+		dateParsed[1] = dateParsed[1].padStart(2, '0');
+		dateParsed[2] = dateParsed[2].padStart(2, '0');
+		console.log(dateParsed);
+		const fechaActual = await this.detalleEntregaModel
+			.find({
+				fechaEntrega: {
+					$gte: new Date(`${dateParsed.join('-')}T00:00:00.000Z`),
+					$lte: new Date(`${dateParsed.join('-')}T23:59:59.999Z`),
+				},
+			})
+			.select(['_id', 'ordenEntrega'])
+			.sort({ ordenEntrega: 1 });
+		if (query.busqueda) {
+			const resp = await this.folioModel
+				.find({
+					numeroFolio: { $regex: query.busqueda, $options: 'i' },
+					idDetalleEntrega: fechaActual,
+				})
+				.limit(query.limit)
+				.skip(query.offset)
+				.populate(populate);
+			return resp;
+		}
+		const resp = await this.folioModel
+			.find({
+				idDetalleEntrega: fechaActual,
+			})
+			.limit(query.limit)
+			.skip(query.offset)
 			.populate(populate);
 		return resp;
 	}

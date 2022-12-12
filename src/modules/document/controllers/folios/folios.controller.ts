@@ -22,6 +22,7 @@ import {
 	ManyFoliosIdsDto,
 	UpdateFolioDto,
 } from '../../dto/folio/folio.dto';
+import { QueryLimitDto } from 'src/common/queryLimit.dto';
 
 @ApiTags('Folios')
 @Controller('document/folios')
@@ -33,6 +34,13 @@ export class FoliosController {
 	async findAll(@Query() query: FolioQueryLimitDto) {
 		const model = await this.foliosService.findAll(query);
 		return customResponse('Folios', model.data, 200, model.total);
+	}
+
+	@Get('/fecha/:fecha')
+	@ApiOperation({ summary: 'Obtener los folios a entregar' })
+	async getAllByDate(@Param('fecha') fecha: string, @Query() query: QueryLimitDto) {
+		const data = await this.foliosService.getAllByDate(query, fecha);
+		return customResponse('Rutas', data);
 	}
 
 	@Get('/ruta/:ruta')

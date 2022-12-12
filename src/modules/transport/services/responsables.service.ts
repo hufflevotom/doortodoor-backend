@@ -8,6 +8,7 @@ import { ManyResponsableDto, ResponsableDto, UpdateResponsableDto } from '../dto
 //* Services
 import { VehiculosService } from './vehiculos.service';
 import { UsuariosService } from 'src/modules/auth/services/usuarios/usuarios.service';
+import { QueryLimitDto } from 'src/common/queryLimit.dto';
 
 @Injectable()
 export class ResponsablesService {
@@ -24,6 +25,64 @@ export class ResponsablesService {
 				$lte: new Date().setHours(23, 59, 59, 999),
 			},
 		});
+	}
+
+	async findByDate(query: QueryLimitDto, fecha: string) {
+		const yesterday = new Date(new Date().setDate(new Date(fecha).getDate() - 1));
+		const dateParsed = yesterday
+			.toLocaleDateString('es-PE', { timeZone: 'America/Lima' })
+			.split('/')
+			.reverse();
+		dateParsed[1] = dateParsed[1].padStart(2, '0');
+		dateParsed[2] = dateParsed[2].padStart(2, '0');
+		if (query.busqueda) {
+			const dnis = await this.usuarioService.findRepartidoresByName(query.busqueda).select('_id');
+			return await this.responsableModel
+				.find({
+					idUsuario: { $in: dnis },
+					createdAt: {
+						$gte: new Date(`${dateParsed.join('-')}T00:00:00.000Z`),
+						$lte: new Date(`${dateParsed.join('-')}T23:59:59.999Z`),
+					},
+				})
+				.sort({ updatedAt: -1 })
+				.limit(query.limit)
+				.skip(query.offset)
+				.populate([
+					{
+						path: 'idVehiculo',
+						model: 'Vehiculo',
+						select: ['placa', 'marca', 'color', 'modelo'],
+					},
+					{
+						path: 'idUsuario',
+						model: 'Usuario',
+						select: ['documento', 'nombre', 'apellidos', 'celular'],
+					},
+				]);
+		}
+		return await this.responsableModel
+			.find({
+				createdAt: {
+					$gte: new Date(`${dateParsed.join('-')}T00:00:00.000Z`),
+					$lte: new Date(`${dateParsed.join('-')}T23:59:59.999Z`),
+				},
+			})
+			.sort({ updatedAt: -1 })
+			.limit(query.limit)
+			.skip(query.offset)
+			.populate([
+				{
+					path: 'idVehiculo',
+					model: 'Vehiculo',
+					select: ['placa', 'marca', 'color', 'modelo'],
+				},
+				{
+					path: 'idUsuario',
+					model: 'Usuario',
+					select: ['documento', 'nombre', 'apellidos', 'celular'],
+				},
+			]);
 	}
 
 	async findOne(id: string): Promise<Responsable> {

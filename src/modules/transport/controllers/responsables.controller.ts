@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	NotFoundException,
+	Param,
+	Post,
+	Put,
+	Query,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 //* Utils
 import { customResponse } from 'src/common/response';
@@ -6,11 +16,19 @@ import { customResponse } from 'src/common/response';
 import { ResponsablesService } from '../services/responsables.service';
 //* DTO's
 import { ManyResponsableDto, ResponsableDto, UpdateResponsableDto } from '../dto/responsable.dto';
+import { QueryLimitDto } from 'src/common/queryLimit.dto';
 
 @ApiTags('Responsables')
 @Controller('transport/responsables')
 export class ResponsablesController {
 	constructor(private readonly responsableService: ResponsablesService) {}
+
+	@Get('/fecha/:fecha')
+	@ApiOperation({ summary: 'Obtener responsables por fecha de reparto' })
+	async findByDate(@Param('fecha') fecha: string, @Query() query: QueryLimitDto) {
+		const data = await this.responsableService.findByDate(query, fecha);
+		return customResponse('Responsables', data);
+	}
 
 	@Get('/:id')
 	@ApiOperation({ summary: 'Obtener un responsable' })

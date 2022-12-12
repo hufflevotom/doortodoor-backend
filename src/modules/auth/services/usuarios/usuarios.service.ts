@@ -34,6 +34,13 @@ export class UsuariosService {
 			.populate('idTipoRol');
 	}
 
+	findRepartidoresByName(nombre: string) {
+		return this.usuarioModel
+			.find({ nombre: { $regex: nombre, $options: 'i' }, idTipoRol: '60bb0fad68bcb70590c9eccd' })
+			.sort({ updatedAt: -1 })
+			.populate('idTipoRol');
+	}
+
 	async count(): Promise<number> {
 		return await this.usuarioModel.count();
 	}
