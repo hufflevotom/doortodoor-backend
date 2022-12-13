@@ -65,3 +65,13 @@ export class ReportadoDto {
 	@ApiProperty({ required: false })
 	justificacion: string;
 }
+
+export class SearchEvidenceDto {
+	@IsString()
+	@ApiProperty({ required: true })
+	idResponsable: string;
+
+	@IsString()
+	@ApiProperty({ required: true })
+	idFolio: string;
+}

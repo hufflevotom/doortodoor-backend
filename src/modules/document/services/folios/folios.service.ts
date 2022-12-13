@@ -254,7 +254,6 @@ export class FoliosService {
 			.reverse();
 		dateParsed[1] = dateParsed[1].padStart(2, '0');
 		dateParsed[2] = dateParsed[2].padStart(2, '0');
-		console.log(dateParsed);
 		const fechaActual = await this.detalleEntregaModel
 			.find({
 				fechaEntrega: {

@@ -10,7 +10,12 @@ import { EstadoFolioService } from '../estado-folio/estado-folio.service';
 import { FoliosService } from '../folios/folios.service';
 //* DTO's
 import { QueryLimitDto } from 'src/common/queryLimit.dto';
-import { EvidenciaDto, ReportadoDto, UpdateEvidenciaDto } from '../../dto/evidencia/evidencia.dto';
+import {
+	EvidenciaDto,
+	ReportadoDto,
+	SearchEvidenceDto,
+	UpdateEvidenciaDto,
+} from '../../dto/evidencia/evidencia.dto';
 
 @Injectable()
 export class EvidenciasService {
@@ -60,6 +65,39 @@ export class EvidenciasService {
 
 	async findOne(id: string): Promise<Evidencia> {
 		return await this.evidenciaModel.findOne({ _id: id });
+	}
+
+	async findOneByFolioAndResponsable(query: SearchEvidenceDto) {
+		const evidence = await this.evidenciaModel
+			.findOne({
+				idFolio: query.idFolio,
+				idResponsable: query.idResponsable,
+			})
+			.populate([
+				{
+					path: 'idEstadoEvidencia',
+					model: 'EstadoFolio',
+					select: ['descripcion'],
+				},
+			]);
+
+		if (!evidence) {
+			throw new NotFoundException('No se encontró evidencia');
+		}
+
+		const images = await this.fotoClienteModel
+			.find({
+				idEvidencia: evidence._id,
+			})
+			.populate([
+				{
+					path: 'idTipoFoto',
+					model: 'TipoFoto',
+					select: ['descripcion'],
+				},
+			]);
+
+		return { evidence, images };
 	}
 
 	async create(dto: EvidenciaDto): Promise<Evidencia> {

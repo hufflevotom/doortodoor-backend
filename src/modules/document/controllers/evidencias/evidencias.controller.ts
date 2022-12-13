@@ -12,7 +12,12 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { QueryLimitDto } from 'src/common/queryLimit.dto';
 import { customResponse } from 'src/common/response';
-import { EvidenciaDto, ReportadoDto, UpdateEvidenciaDto } from '../../dto/evidencia/evidencia.dto';
+import {
+	EvidenciaDto,
+	ReportadoDto,
+	SearchEvidenceDto,
+	UpdateEvidenciaDto,
+} from '../../dto/evidencia/evidencia.dto';
 import { EvidenciasService } from '../../services/evidencias/evidencias.service';
 
 @ApiTags('Evidencias')
@@ -28,6 +33,15 @@ export class EvidenciasController {
 		const model = await this.evidenciasService.findAll(query);
 		const total = await this.evidenciasService.count();
 		return customResponse('Evidencia', model, 200, total);
+	}
+
+	@Get('/delivery')
+	@ApiOperation({
+		summary: 'Obtener todas las evidencias por ID de folio y responsable',
+	})
+	async findOneByFolioAndResponsable(@Query() query: SearchEvidenceDto) {
+		const model = await this.evidenciasService.findOneByFolioAndResponsable(query);
+		return customResponse('Evidencia', model);
 	}
 
 	@Get('/folio/:id')

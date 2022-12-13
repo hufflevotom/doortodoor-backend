@@ -71,7 +71,6 @@ export class UsuariosController {
 	async delete(@Param('id') id: string) {
 		const deleteResult = await this.usuariosService.delete(id);
 		if (deleteResult) {
-			console.log('deleteResult', deleteResult);
 			return customResponse('Usuario eliminado');
 		}
 		throw new NotFoundException('Usuario no encontrado');
